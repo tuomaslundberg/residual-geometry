@@ -44,7 +44,7 @@ class LinearRegisterClassifier:
     def fit(self, X: np.ndarray, y: np.ndarray) -> "LinearRegisterClassifier":
         y_enc = self._le.fit_transform(y)
         self._clf = LogisticRegression(
-            C=self.C, max_iter=self.max_iter, solver="lbfgs", multi_class="auto"
+            C=self.C, max_iter=self.max_iter, solver="lbfgs"
         )
         self._clf.fit(X, y_enc)
         return self

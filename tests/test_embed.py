@@ -1,26 +1,22 @@
 """Tests for embed.py. Model is mocked — no download required."""
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import numpy as np
-import pytest
 
 from register_geometry.embed import Embedder
 
 
-@patch("register_geometry.embed.SentenceTransformer", autospec=True)
-def test_embed_shape(mock_st_cls):
+def test_embed_shape():
     mock_model = MagicMock()
     mock_model.encode.return_value = np.random.default_rng(0).standard_normal(
         (5, 768)
     ).astype(np.float32)
-    mock_st_cls.return_value = mock_model
 
-    with patch.dict("sys.modules", {"sentence_transformers": MagicMock(SentenceTransformer=mock_st_cls)}):
-        embedder = Embedder(model_name="mock/model", device="cpu", batch_size=8)
-        embedder._model = mock_model  # inject directly
+    embedder = Embedder(model_name="mock/model", device="cpu", batch_size=8)
+    embedder._model = mock_model  # bypass _load(); model is never downloaded
 
-        result = embedder.embed(["a", "b", "c", "d", "e"])
+    result = embedder.embed(["a", "b", "c", "d", "e"])
 
     assert result.shape == (5, 768)
     assert result.dtype == np.float32
