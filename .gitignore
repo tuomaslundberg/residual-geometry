@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+*.egg
+
+# Data and outputs (large files — store paths in config, not in repo)
+data/
+outputs/
+*.pt
+*.npz
+*.npy
+*.pkl
+
+# Notebooks
+.ipynb_checkpoints/
+notebooks/*.ipynb
+
+# SLURM logs
+experiments/slurm/logs/
+*.out
+*.err
+
+# Misc
+.DS_Store
+.env
+*.log

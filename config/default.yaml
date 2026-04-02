@@ -1,0 +1,26 @@
+model:
+  name: sentence-transformers/LaBSE
+  batch_size: 64
+  device: auto  # "cpu" | "cuda" | "auto"
+
+data:
+  path: data/
+  languages: [fi, en]
+  registers: [HI, ID, IN, IP, LY, NA, OP, SP]
+  # Expected JSONL format: {"text": "...", "language": "fi", "register": "NA"}
+
+projection:
+  method: inlp  # inlp | leace | none
+  inlp:
+    n_iterations: 20
+    classifier: logistic  # logistic | svm
+  leace:
+    rank: null  # null = auto-select via explained variance
+
+evaluation:
+  n_permutations: 1000  # for null permutation baseline
+  seed: 42
+
+output:
+  dir: outputs/
+  save_embeddings: true  # pre- and post-projection; can be large

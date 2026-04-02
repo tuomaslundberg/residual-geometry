@@ -1,0 +1,26 @@
+# Experiment: baseline geometry (no projection) + INLP projection.
+# Run via: sbatch experiments/slurm/run_baseline.sh
+
+model:
+  name: sentence-transformers/LaBSE
+  batch_size: 128
+  device: auto
+
+data:
+  path: /scratch/project_462000999/tlundber/data/register-geometry/fi_en_docs.jsonl
+  languages: [fi, en]
+  registers: [HI, ID, IN, IP, LY, NA, OP, SP]
+
+projection:
+  method: inlp
+  inlp:
+    n_iterations: 20
+    classifier: logistic
+
+evaluation:
+  n_permutations: 1000
+  seed: 42
+
+output:
+  dir: /scratch/project_462000999/tlundber/outputs/register-geometry/baseline/
+  save_embeddings: true

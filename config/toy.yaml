@@ -1,0 +1,17 @@
+# Overrides for local --toy runs. Applied on top of default.yaml.
+# Generates synthetic Gaussian data; no GPU or real corpus needed.
+
+model:
+  batch_size: 8
+  device: cpu
+
+toy:
+  n_docs_per_class: 15  # per (language, register) combination
+  seed: 42
+
+projection:
+  inlp:
+    n_iterations: 3  # fast for local dev
+
+evaluation:
+  n_permutations: 50  # enough to get a null distribution shape
