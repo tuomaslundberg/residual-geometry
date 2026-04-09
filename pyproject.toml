@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "register-geometry"
 version = "0.1.0"
 description = "Cross-lingual register geometry in multilingual sentence encoders"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 dependencies = [
     "sentence-transformers>=3.0",
     "scikit-learn>=1.4",
