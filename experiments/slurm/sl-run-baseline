@@ -14,7 +14,6 @@
 if [ -z "$SLURM_JOB_ID" ]; then
     LOGDIR="$(git -C "$(dirname "$0")" rev-parse --show-toplevel)/experiments/slurm/logs"
     mkdir -p "$LOGDIR/archive"
-    # Move any existing .out/.err into archive before this run
     find "$LOGDIR" -maxdepth 1 \( -name "*.out" -o -name "*.err" \) -exec mv {} "$LOGDIR/archive/" \;
     sbatch "$0" "$@"
     exit
@@ -30,34 +29,30 @@ echo "Job $SLURM_JOB_ID started at $(date -Is)"
 echo "Node: $SLURMD_NODENAME  REPO: $REPO"
 
 # --- Module loading ---
-# LUMI uses a hierarchical EasyBuild module system.
-# LUMI/<version> sets the software stack; partition/G unlocks GPU-compiled modules.
-# The PyTorch module on LUMI is a Singularity container — not a native Python env.
+# Use the CSC pytorch module stack — NOT the LUMI/24.03 EasyBuild stack,
+# which is explicitly unsupported (ROCm/GPU driver mismatch as of 2026-04).
 #
-# Before first use, check available versions:
-#   module spider PyTorch
+# pytorch/2.7 is a Singularity container, but the module sets up transparent
+# wrappers: 'python', 'python3', and 'pip3' all call into the container.
+# No 'singularity exec' invocation needed.
 #
-# PyTorch 2.6.0+ containers manage a pip-installable venv automatically
-# ($CONTAINERROOT/user-software/venv/pytorch). Prefer this if available.
+# Python version inside the container: 3.11.0rc1 (CSC-shipped RC build).
 #
-# PyTorch 2.2.2 (current): uses miniconda inside the container.
-# Extra packages must be installed via PYTHONUSERBASE (see below).
-# Python invocation via: singularity exec $SIF conda-python-simple <script>
+# Note: SLURM jobs do NOT go through the SSH RemoteCommand that pre-loads
+# this module in interactive sessions. Must load it explicitly here.
 module purge
-module load LUMI/24.03 partition/G
-module load PyTorch/2.2.2-rocm-5.6.1-python-3.10-singularity-20240315
+module use /appl/local/csc/modulefiles
+module load pytorch/2.7
 
-# --- Python package path ---
-# venvs on LUMI's Lustre filesystem do not work cleanly with the singularity
-# container. Workaround: point PYTHONUSERBASE to a scratch path that is
-# bind-mounted into the container by $SINGULARITY_BIND.
-# Install once interactively: pip install --user -e ".[dev]"
+# --- Package path ---
+# Packages installed to PYTHONUSERBASE on /scratch are visible inside the
+# container (the container mounts /scratch). This is the working workaround
+# for adding packages on top of the CSC module without a venv.
+# Install once interactively: pip3 install --user -e ".[dev]"
 export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
 
 # --- Run ---
-CONFIG=experiments/configs/exp_baseline.yaml
-singularity exec "$SIF" conda-python-simple scripts/run_pipeline.py \
-    --config "$CONFIG"
+python scripts/run_pipeline.py --config experiments/configs/exp_baseline.yaml
 
 # --- Timing ---
 echo "Job $SLURM_JOB_ID finished at $(date -Is)"
