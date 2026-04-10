@@ -21,20 +21,35 @@ across Finnish and English after language-identifying signal is linearly project
 ## Quick start
 
 ```bash
-# Install (editable)
-pip install -e ".[dev,vis]"
-
 # Smoke test — no GPU, no corpus, synthetic data
-python scripts/run_pipeline.py --toy
+# No installation needed: scripts add src/ to sys.path automatically,
+# and all runtime deps (sentence-transformers, scikit-learn, scipy, numpy)
+# are pre-installed in the pytorch/2.7 container on LUMI.
+python3 scripts/run_pipeline.py --toy
 
 # Full run with custom config
-python scripts/run_pipeline.py --config experiments/configs/exp_baseline.yaml
+python3 scripts/run_pipeline.py --config experiments/configs/exp_baseline.yaml
 ```
 
 ## Run tests
 
 ```bash
-pytest
+# Tests mock the model — no GPU or corpus needed.
+# Set PYTHONPATH so pytest finds the package without an editable install:
+PYTHONPATH=src python3 -m pytest
+```
+
+## Installing additional packages (LUMI)
+
+Runtime deps are pre-installed in the `pytorch/2.7` container. To add packages:
+
+```bash
+# PYTHONUSERBASE is exported in ~/.zshrc and the SSH RemoteCommand.
+# Use python3 -m pip (not pip3 — resolves to system Python 3.6).
+# Use --no-build-isolation for editable installs (build subprocess falls
+# back to host Python 3.6 otherwise).
+python3 -m pip install --user --upgrade pip
+python3 -m pip install --user --no-build-isolation -e ".[dev]"
 ```
 
 ## Project layout
@@ -61,12 +76,12 @@ register-geometry/
 
 ## LUMI
 
-See `experiments/slurm/run_baseline.sh`. Adjust `--account`, paths, and module
-versions to match your allocation.
+See `experiments/slurm/sl-run-baseline`. Uses the CSC `pytorch/2.7` module
+(Singularity container with transparent Python wrappers). The script
+self-submits when invoked directly and archives previous logs on each run.
 
 ```bash
-mkdir -p experiments/slurm/logs
-sbatch experiments/slurm/run_baseline.sh
+bash experiments/slurm/sl-run-baseline
 ```
 
 ## Data format

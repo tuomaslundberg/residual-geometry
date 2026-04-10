@@ -4,7 +4,7 @@ model:
   device: auto  # "cpu" | "cuda" | "auto"
 
 data:
-  path: data/
+  path: MUST_OVERRIDE  # override in experiment config; e.g. /scratch/.../fi_en_docs.jsonl
   languages: [fi, en]
   registers: [HI, ID, IN, IP, LY, NA, OP, SP]
   # Expected JSONL format: {"text": "...", "language": "fi", "register": "NA"}
