@@ -48,7 +48,9 @@ module load pytorch/2.7
 # Packages installed to PYTHONUSERBASE on /scratch are visible inside the
 # container (the container mounts /scratch). This is the working workaround
 # for adding packages on top of the CSC module without a venv.
-# Install once interactively: pip3 install --user -e ".[dev]"
+# Install once interactively: python -m pip install --user -e ".[dev]"
+# Do NOT use 'pip3' directly — it resolves to /usr/bin/pip3 (system Python 3.6)
+# rather than the container wrapper. 'python' is correctly the container binary.
 export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
 
 # --- Run ---
