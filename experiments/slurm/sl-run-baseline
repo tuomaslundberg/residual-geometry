@@ -48,9 +48,17 @@ module load pytorch/2.7
 # Packages installed to PYTHONUSERBASE on /scratch are visible inside the
 # container (the container mounts /scratch). This is the working workaround
 # for adding packages on top of the CSC module without a venv.
-# Install once interactively (upgrade pip first — container pip too old for PEP 660):
-#   python3 -m pip install --user --upgrade pip setuptools
-#   python3 -m pip install --user -e ".[dev]"
+# Setup (one-time, run interactively before first job):
+#   python3 -m pip install --user --upgrade pip
+#   python3 -m pip install --user "setuptools>=68" wheel
+#   python3 -m pip install --user --no-build-isolation -e ".[dev]"
+#
+# Why --no-build-isolation: pip's build isolation spawns a subprocess via
+# sys.executable, which resolves to the HOST /usr/bin/python3 (Python 3.6)
+# rather than the container. That Python 3.6 subprocess can't satisfy
+# setuptools>=68. Skipping isolation uses the build tools already in
+# PYTHONUSERBASE directly. Only needed for editable (-e) installs.
+#
 # Use 'python3', not 'python' (no wrapper) or 'pip3' (resolves to system Python 3.6).
 export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
 
