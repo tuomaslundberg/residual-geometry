@@ -3,13 +3,14 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "register-geometry"
-version = "0.1.0"
-description = "Cross-lingual register geometry in multilingual sentence encoders"
+name = "residual-geometry"
+version = "0.2.0"
+description = "Language-signal removal and residual characterisation in multilingual sentence encoders"
 requires-python = ">=3.10"
 dependencies = [
     "sentence-transformers>=3.0",
     "scikit-learn>=1.4",
+    "scikit-dimension>=0.3",
     "scipy>=1.12",
     "numpy>=1.26",
     "pyyaml>=6.0",

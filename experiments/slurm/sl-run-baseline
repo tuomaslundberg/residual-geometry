@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=reg-geo-baseline
+#SBATCH --job-name=residual-geo-phase1
 #SBATCH --account=project_462000999
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
@@ -46,14 +46,21 @@ module load pytorch/2.7
 
 # --- Package path ---
 # Runtime deps (sentence-transformers, scikit-learn, scipy, numpy) are
-# pre-installed in the pytorch/2.7 container. run_pipeline.py adds src/
-# to sys.path, so no editable install is needed to run the pipeline.
-# PYTHONUSERBASE is set for any user-installed extras; see README for
-# install instructions if additional packages are needed.
+# pre-installed in the pytorch/2.7 container.
+# PYTHONUSERBASE is set for any user-installed extras (scikit-dimension, etc.).
+# Use PYTHONPATH=src if running without an editable install.
 export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
+export PYTHONPATH="$REPO/src:${PYTHONPATH:-}"
+
+FI=/scratch/project_462000999/tlundber/data/europarl/europarl.fi
+EN=/scratch/project_462000999/tlundber/data/europarl/europarl.en
 
 # --- Run ---
-python3 scripts/run_pipeline.py --config experiments/configs/exp_baseline.yaml
+python3 experiments/pilot_phase1.py \
+    --fi "$FI" \
+    --en "$EN" \
+    --out outputs/pilot_phase1.json \
+    --n-pairs 5000
 
 # --- Timing ---
 echo "Job $SLURM_JOB_ID finished at $(date -Is)"

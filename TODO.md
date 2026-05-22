@@ -1,62 +1,105 @@
-# TODO — register-geometry
-
-Tasks that are genuinely open; research decisions that aren't yet locked are
-marked explicitly. Roughly ordered by dependency.
-
----
-
-## Immediate — first LUMI run
-
-- [ ] Clone repo to LUMI scratch: `/scratch/project_462000999/tlundber/register-geometry`
-- [ ] Create venv on LUMI and install deps: `pip install -e ".[dev]"`
-- [ ] Verify `--toy` run on a CPU node (no data or GPU needed — pure smoke test)
-- [ ] Write `scripts/prepare_data.py` — convert CORE corpus to pipeline JSONL format
-      (`{"text": "...", "language": "fi"|"en", "register": "HI"|...|"SP"}`)
-- [ ] Update `experiments/configs/exp_baseline.yaml` `data.path` to converted JSONL
-- [ ] Submit first real run: `sbatch experiments/slurm/run_baseline.sh`
-- [ ] Inspect `outputs/results.json`; sanity-check geometry metrics
+# TODO — residual-geometry
+*Project task list. Updated in-session. Research decisions belong in context-card-turkunlp.md.*
+*Format: `- [ ]` open · `- [x]` done · `[BLOCKED]` cannot proceed without external input*
 
 ---
 
-## Short-term
+## State snapshot (2026-05-21)
 
-- [ ] Implement `save_embeddings` in pipeline — config flag exists but saving is not yet wired;
-      persist pre- and post-projection arrays as `.npz` for reuse across runs
-- [ ] Visualisation module (`src/register_geometry/visualise.py`):
-      UMAP plots coloured by language and by register, pre and post projection
-      (optional deps `umap-learn` + `matplotlib` are already declared in `[vis]`)
-- [ ] Human-readable results summary: pretty-print key metrics to stdout alongside
-      `results.json` (avoids having to read raw JSON after every run)
+**Pipeline restructure: done.** Package renamed to `residual-geometry`; new layout
+`src/residual_geometry/{embed,erase,analyse,eval,data}`; 23 tests pass; pilot stubs in
+`experiments/`. Research direction locked at 2026-05-19 sync (see context card).
+
+**What's next: LUMI setup + Phase 1 pilot.**
 
 ---
 
-## Medium-term
+## Immediate — LUMI setup
 
-*(Some items below depend on the Filip sync — do not commit to a method until then.)*
-
-- [ ] Implement and test `LEACEProjector` end-to-end on LUMI
-      (requires `pip install -e ".[leace]"`; add a test fixture once the dep is confirmed available)
-- [ ] Ablation: projection depth sweep — vary INLP `n_iterations` and LEACE rank;
-      add a SLURM array script and a corresponding experiment config
-- [ ] Second encoder baseline — open; not yet decided (candidate: mBERT or XLM-R)
-
----
-
-## Research decisions (open — do not resolve without supervisor input)
-
-- [ ] **Projection method**: INLP vs LEACE vs Filip's translation-pair projection, or combination —
-      depends on Filip sync; boundary with his work not yet confirmed
-- [ ] **RQ wording**: finalise after method is locked
-- [ ] **Metric set**: Procrustes disparity + RSA are in; CKA is optional/deferred —
-      confirm before writing the Methods chapter
-- [ ] **Diagnostic transfer methodology**: exact train/test split strategy,
-      whether to use held-out data or cross-validation
+- [ ] **Clone/update repo on LUMI scratch**
+  ```bash
+  cd /scratch/project_462000999/tlundber/
+  git clone git@github.com:tuomaslundberg/residual-geometry.git
+  # or if old register-geometry dir exists: rename + pull
+  ```
+- [ ] **Create new venv** (old one was `venvs/register-geometry`)
+  ```bash
+  python -m venv /scratch/project_462000999/tlundber/venvs/residual-geometry
+  source /scratch/project_462000999/tlundber/venvs/residual-geometry/bin/activate
+  pip install -e ".[dev]"
+  ```
+- [ ] **Run pytest on LUMI** — confirm all 23 pass before any experiment work
+- [ ] **Fetch Europarl FI-EN data to scratch** — OPUS download or copy from existing LUMI storage;
+      target: `/scratch/project_462000999/tlundber/data/europarl/europarl.fi` + `.en`
 
 ---
 
-## Implementation course (TKO-5330)
+## Immediate — Phase 1 pilot (gateway check)
 
-- [ ] Document exact LUMI module versions used after first successful run
-      (add to `experiments/` or README)
-- [ ] Final README pass before course submission — confirm install instructions,
-      example run, and repo structure description are up to date
+Entrypoint: `experiments/pilot_phase1.py`
+
+- [ ] **Confirm evaluation framework** — Phase 1 measures:
+  - Language probe accuracy + selectivity (Hewitt & Liang 2019) → quantifies removal completeness
+  - Bitext retrieval P@1/MRR → checks semantic preservation post-removal
+  - Divergence stats (pairwise L2 mean/std/p95) → characterises cross-lingual distribution shift
+  - Geometry diagnostics: participation ratio, anisotropy, TwoNN intrinsic dim → residual structure
+  These are already wired in `pilot_phase1.py`. Confirm with supervisor if any are unexpected.
+- [ ] **Run Phase 1 pilot** (LaBSE, Europarl 5k pairs, identity + mean + INLP)
+  ```bash
+  python experiments/pilot_phase1.py \
+      --fi data/europarl/europarl.fi \
+      --en data/europarl/europarl.en \
+      --out outputs/pilot_phase1.json
+  ```
+- [ ] **Inspect results** — key gateway questions:
+  - Does INLP reduce language probe accuracy to near-chance (selectivity ≈ 0)?
+  - Does bitext retrieval stay high (P@1 > 0.8) after removal?
+  - Does the residual have non-trivial TwoNN ID (not 1–2, not equal to original)?
+
+---
+
+## Short-term (after Phase 1 passes)
+
+- [ ] **XLM-R baseline** — run Phase 1 pilot with `FacebookAI/xlm-roberta-base` for encoder comparison
+- [ ] **Phase 2 pilot design** — decide candidate labels for residual probing:
+      domain (Europarl committee topic), source type, formality, or combinations;
+      implement `experiments/pilot_phase2.py`
+- [ ] **SLURM script** — update `experiments/slurm/run_baseline.sh` for Phase 1
+      (currently wired to old `run_pipeline.py` entry point)
+- [ ] **Visualisation** — UMAP of residual coloured by encoder, language, and candidate labels;
+      add to `src/residual_geometry/visualise.py` (optional deps already declared)
+- [ ] **`scripts/prepare_data.py`** — convert CORE corpus to JSONL if register labels needed for Phase 2
+
+---
+
+## LEACE (requires optional dep)
+
+- [ ] Confirm `concept-erasure` available on LUMI (`pip install concept-erasure` or from wheel)
+- [ ] Add LEACE to Phase 1 eraser sweep once dep confirmed
+- [ ] Add a test fixture that exercises `LEACEEraser` end-to-end
+
+---
+
+## Infrastructure
+
+- [ ] Update `.gitignore` — add `outputs/`, `data/`, `*.npz`, `*.json` result files if not already
+- [ ] LUMI module documentation — record exact `module load` string used after first successful run;
+      add to `experiments/lumi-onboarding.md`
+
+---
+
+## Done
+
+- [x] Repo rename: `register-geometry` → `residual-geometry`; local folder + GitHub remote updated
+- [x] Package restructure: `src/residual_geometry/{embed,erase,analyse,eval,data}` created
+- [x] New erasers: `INLPEraser` (with `projection_matrix` + `n_directions_removed`),
+      `MeanCenteringEraser`, `MikolovProjection`, `LEACEEraser`
+- [x] New analysis: `participation_ratio`, `anisotropy`, `twonn_intrinsic_dim`, `divergence_stats`
+- [x] New eval: `language_probe` (selectivity), `linear_probe`, `bitext_retrieval`
+- [x] Data: `load_europarl`, `load_infopankki` loaders added
+- [x] Old `register_geometry` archived to `_archive/`
+- [x] 23 tests migrated (import paths only); all pass locally
+- [x] `experiments/pilot_phase1.py` runnable; `experiments/pilot_phase2.py` stub
+- [x] `pyproject.toml`: name → `residual-geometry`, added `scikit-dimension>=0.3`
+- [x] `README.md` rewritten
+- [x] Overleaf thesis scaffold: all 8 chapters written, bibliography complete (22 entries)

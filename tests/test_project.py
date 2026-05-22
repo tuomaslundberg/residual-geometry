@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from register_geometry.project import (
+from residual_geometry.erase import (
     IdentityProjector,
     INLPProjector,
     LanguageProjector,

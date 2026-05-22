@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from register_geometry.transfer import LinearRegisterClassifier, TransferResult, cross_lingual_transfer
+from residual_geometry.eval.probing import LinearRegisterClassifier, TransferResult, cross_lingual_transfer
 
 REGISTERS = ["HI", "IN", "NA", "OP"]
 

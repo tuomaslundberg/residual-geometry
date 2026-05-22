@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 
 import numpy as np
 
-from register_geometry.embed import Embedder
+from residual_geometry.embed.encoder import Embedder
 
 
 def test_embed_shape():

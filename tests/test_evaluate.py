@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from register_geometry.evaluate import (
+from residual_geometry.analyse.geometry import (
     GeometryResult,
     evaluate_geometry,
     procrustes_disparity,
