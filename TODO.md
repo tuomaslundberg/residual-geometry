@@ -16,19 +16,9 @@
 
 ## Immediate — LUMI setup
 
-- [ ] **Clone/update repo on LUMI scratch**
-  ```bash
-  cd /scratch/project_462000999/tlundber/
-  git clone git@github.com:tuomaslundberg/residual-geometry.git
-  # or if old register-geometry dir exists: rename + pull
-  ```
-- [ ] **Create new venv** (old one was `venvs/register-geometry`)
-  ```bash
-  python -m venv /scratch/project_462000999/tlundber/venvs/residual-geometry
-  source /scratch/project_462000999/tlundber/venvs/residual-geometry/bin/activate
-  pip install -e ".[dev]"
-  ```
-- [ ] **Run pytest on LUMI** — confirm all 23 pass before any experiment work
+- [x] **Clone repo on LUMI scratch** — `/scratch/project_462000999/tlundber/residual-geometry/`
+- [x] **Install extras on LUMI** — `pip install --user --no-build-isolation -e ".[dev]"`; no venv needed
+- [x] **Run pytest on LUMI** — 23/23 pass (Python 3.11.0rc1, pytorch/2.7 container)
 - [ ] **Fetch Europarl FI-EN data to scratch** — OPUS download or copy from existing LUMI storage;
       target: `/scratch/project_462000999/tlundber/data/europarl/europarl.fi` + `.en`
 
