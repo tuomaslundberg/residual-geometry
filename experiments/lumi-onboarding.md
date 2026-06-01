@@ -34,7 +34,7 @@ module use /appl/local/csc/modulefiles
 module load pytorch/2.7
 
 # 2. Clone repo (no venv needed — runtime deps pre-installed in container)
-cd /scratch/project_462000999/tlundber/
+cd /scratch/project_462000999/tlundber/projects/
 git clone git@github.com:tuomaslundberg/residual-geometry.git
 cd residual-geometry
 
@@ -56,7 +56,7 @@ PYTHONPATH=src python3 -m pytest tests/ -v
 | Resource | Path |
 |----------|------|
 | Scratch root | `/scratch/project_462000999/tlundber/` |
-| Repo | `/scratch/project_462000999/tlundber/residual-geometry/` |
+| Repo | `/scratch/project_462000999/tlundber/projects/residual-geometry/` |
 | User packages | `/scratch/project_462000999/tlundber/pythonuserbase/` |
 | Data (target) | `/scratch/project_462000999/tlundber/data/europarl/` |
 | Outputs | `residual-geometry/outputs/` |
@@ -144,7 +144,7 @@ Conversion script: `scripts/prepare_data.py` — to be written.
 ## Session start checklist
 
 1. `module use /appl/local/csc/modulefiles && module load pytorch/2.7`
-2. `cd /scratch/project_462000999/tlundber/residual-geometry`
+2. `cd /scratch/project_462000999/tlundber/projects/residual-geometry`
 3. `git pull` (sync with local changes)
 4. `PYTHONPATH=src python3 -m pytest tests/ -q` — confirm 23 pass
 5. Open `TODO.md` for current open tasks
@@ -165,8 +165,8 @@ Conversion script: `scripts/prepare_data.py` — to be written.
 
 - No venv needed — runtime deps are pre-installed in the `pytorch/2.7` container.
   Old venv `venvs/register-geometry` is stale — do not use.
-- Old repo dir `register-geometry/` on scratch (if present) can be deleted after confirming
-  no outputs are needed (check `outputs/` subdir first).
+- Old repo dir `register-geometry/` archived to `projects/_archive/register-geometry/` (2026-06-01).
+  Outputs were toy-data only (near-random F1); safe to delete if space needed.
 - SLURM script: `experiments/slurm/sl-run-baseline` (self-submitting, archives logs).
 - `concept-erasure` for LEACE is listed as optional dep (`pip install -e ".[leace]"`).
   Confirm it installs cleanly on LUMI before adding to eraser sweep.
