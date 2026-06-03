@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=residual-geo-phase1
+#SBATCH --job-name=residual-geo-phase1-hplt
 #SBATCH --account=project_462000999
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
@@ -28,39 +28,22 @@ JOB_START=$(date +%s)
 echo "Job $SLURM_JOB_ID started at $(date -Is)"
 echo "Node: $SLURMD_NODENAME  REPO: $REPO"
 
-# --- Module loading ---
-# Use the CSC pytorch module stack — NOT the LUMI/24.03 EasyBuild stack,
-# which is explicitly unsupported (ROCm/GPU driver mismatch as of 2026-04).
-#
-# pytorch/2.7 is a Singularity container, but the module sets up transparent
-# wrappers: 'python', 'python3', and 'pip3' all call into the container.
-# No 'singularity exec' invocation needed.
-#
-# Python version inside the container: 3.11.0rc1 (CSC-shipped RC build).
-#
-# Note: SLURM jobs do NOT go through the SSH RemoteCommand that pre-loads
-# this module in interactive sessions. Must load it explicitly here.
 module purge
 module use /appl/local/csc/modulefiles
 module load pytorch/2.7
 
-# --- Package path ---
-# Runtime deps (sentence-transformers, scikit-learn, scipy, numpy) are
-# pre-installed in the pytorch/2.7 container.
-# PYTHONUSERBASE is set for any user-installed extras (scikit-dimension, etc.).
-# Use PYTHONPATH=src if running without an editable install.
 export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
 export PYTHONPATH="$REPO/src:${PYTHONPATH:-}"
 
-FI=/scratch/project_462000999/tlundber/data/europarl/Europarl.en-fi.fi
-EN=/scratch/project_462000999/tlundber/data/europarl/Europarl.en-fi.en
+FI=/scratch/project_462000999/tlundber/data/hplt-samples/v3/fin_Latn_sample_exploded.jsonl
+EN=/scratch/project_462000999/tlundber/data/hplt-samples/v3/eng_Latn_sample_exploded.jsonl
 
 # --- Run ---
-python3 experiments/pilot_phase1.py \
+python3 experiments/pilot_phase1_hplt.py \
     --fi "$FI" \
     --en "$EN" \
-    --out outputs/pilot_phase1.json \
-    --n-pairs 5000
+    --out outputs/pilot_phase1_hplt.json \
+    --n-docs 5000
 
 # --- Timing ---
 echo "Job $SLURM_JOB_ID finished at $(date -Is)"

@@ -1,7 +1,8 @@
-"""Corpus loaders for Europarl and infopankki parallel data."""
+"""Corpus loaders for Europarl, infopankki, and HPLT data."""
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 
@@ -44,3 +45,30 @@ def load_infopankki(
     Format assumed identical to Europarl (one sentence per line).
     """
     return load_europarl(fi_path, en_path, max_pairs=max_pairs)
+
+
+def load_hplt(
+    path: str | Path,
+    max_docs: int | None = None,
+) -> list[str]:
+    """Load texts from an HPLT v3 exploded JSONL file.
+
+    Each line is a JSON object; only the 'text' field is used.
+    Empty texts are skipped.
+
+    Args:
+        path: Path to the exploded JSONL file (one document per line).
+        max_docs: Truncate to this many documents if given.
+
+    Returns:
+        List of non-empty text strings.
+    """
+    texts: list[str] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            if max_docs is not None and len(texts) >= max_docs:
+                break
+            text = json.loads(line).get("text", "").strip()
+            if text:
+                texts.append(text)
+    return texts
