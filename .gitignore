@@ -10,7 +10,7 @@ venv/
 *.egg
 
 # Data and outputs (large files — store paths in config, not in repo)
-data/
+/data/
 outputs/
 *.pt
 *.npz
