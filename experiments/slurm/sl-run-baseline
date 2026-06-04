@@ -12,7 +12,7 @@
 
 # If invoked directly (not via sbatch), archive previous logs and submit.
 if [ -z "$SLURM_JOB_ID" ]; then
-    LOGDIR="$(git -C "$(dirname "$(readlink -f "$0")")" rev-parse --show-toplevel)/experiments/slurm/logs"
+    LOGDIR="$(git -C "$(pwd)" rev-parse --show-toplevel)/experiments/slurm/logs"
     mkdir -p "$LOGDIR/archive"
     find "$LOGDIR" -maxdepth 1 \( -name "*.out" -o -name "*.err" \) -exec mv {} "$LOGDIR/archive/" \;
     sbatch "$0" "$@"
@@ -21,7 +21,7 @@ fi
 
 set -euo pipefail
 
-REPO=$(git -C "$(dirname "$(readlink -f "$0")")" rev-parse --show-toplevel)
+REPO=$(git -C "$SLURM_SUBMIT_DIR" rev-parse --show-toplevel)
 cd "$REPO"
 
 JOB_START=$(date +%s)
