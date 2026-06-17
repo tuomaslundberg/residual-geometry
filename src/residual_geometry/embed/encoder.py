@@ -31,9 +31,17 @@ class Embedder:
 
     def _load(self) -> None:
         if self._model is None:
-            from sentence_transformers import SentenceTransformer
+            from sentence_transformers import SentenceTransformer, models as st_models
 
-            self._model = SentenceTransformer(self.model_name, device=self.device)
+            try:
+                self._model = SentenceTransformer(self.model_name, device=self.device)
+            except (OSError, ValueError):
+                # Raw HF model (no sentence_bert_config.json) — wrap with mean pooling.
+                # Handles e.g. FacebookAI/xlm-roberta-base.
+                t = st_models.Transformer(self.model_name)
+                p = st_models.Pooling(t.get_word_embedding_dimension())
+                self._model = SentenceTransformer(modules=[t, p])
+                self._model = self._model.to(self.device)
 
     def embed(self, texts: list[str], show_progress: bool = False) -> np.ndarray:
         """Return L2-normalised embeddings, shape (n, d)."""

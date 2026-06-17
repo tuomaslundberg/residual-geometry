@@ -47,28 +47,51 @@ def load_infopankki(
     return load_europarl(fi_path, en_path, max_pairs=max_pairs)
 
 
+_CORE_MAIN = frozenset({"HI", "LY", "SP", "ID", "NA", "IN", "OP", "IP"})
+
+
 def load_hplt(
     path: str | Path,
     max_docs: int | None = None,
-) -> list[str]:
-    """Load texts from an HPLT v3 exploded JSONL file.
-
-    Each line is a JSON object; only the 'text' field is used.
-    Empty texts are skipped.
+    return_labels: bool = False,
+    min_confidence: float = 0.0,
+) -> "list[str] | tuple[list[str], list[str]]":
+    """Load texts (and optionally register labels) from an HPLT v3 exploded JSONL file.
 
     Args:
         path: Path to the exploded JSONL file (one document per line).
-        max_docs: Truncate to this many documents if given.
+        max_docs: Truncate to this many accepted documents if given.
+        return_labels: If True, also return hard register labels (argmax over the
+            8 main CORE classes: HI, LY, SP, ID, NA, IN, OP, IP). Requires the
+            ``web-register`` field to be present in each record.
+        min_confidence: Minimum probability of the argmax CORE class to include a
+            document. Documents below this threshold are silently skipped.
+            Recommended value: 0.4 (CORE-optimised threshold for EN and FI).
 
     Returns:
-        List of non-empty text strings.
+        ``list[str]`` when ``return_labels=False`` (default, backwards-compatible).
+        ``(texts, labels)`` tuple of equal-length lists when ``return_labels=True``.
     """
     texts: list[str] = []
+    labels: list[str] = []
+
     with open(path, encoding="utf-8") as f:
         for line in f:
             if max_docs is not None and len(texts) >= max_docs:
                 break
-            text = json.loads(line).get("text", "").strip()
-            if text:
-                texts.append(text)
-    return texts
+            d = json.loads(line)
+            text = d.get("text", "").strip()
+            if not text:
+                continue
+            if return_labels:
+                reg_probs = d.get("web-register", {})
+                core = {k: v for k, v in reg_probs.items() if k in _CORE_MAIN}
+                if not core:
+                    continue
+                top_label = max(core, key=core.get)  # type: ignore[arg-type]
+                if core[top_label] < min_confidence:
+                    continue
+                labels.append(top_label)
+            texts.append(text)
+
+    return (texts, labels) if return_labels else texts

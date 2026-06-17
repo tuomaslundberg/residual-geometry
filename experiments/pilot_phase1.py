@@ -23,7 +23,13 @@ from pathlib import Path
 import numpy as np
 
 
-def run_pilot(fi_path: str, en_path: str, out_path: str, n_pairs: int = 5000) -> None:
+def run_pilot(
+    fi_path: str,
+    en_path: str,
+    out_path: str,
+    n_pairs: int = 5000,
+    model_name: str = "sentence-transformers/LaBSE",
+) -> None:
     from residual_geometry.data.loaders import load_europarl
     from residual_geometry.embed.encoder import Embedder
     from residual_geometry.erase import IdentityProjector, INLPEraser, MeanCenteringEraser
@@ -38,9 +44,9 @@ def run_pilot(fi_path: str, en_path: str, out_path: str, n_pairs: int = 5000) ->
     all_texts = fi_sents + en_sents
     lang_labels = np.array(["fi"] * len(fi_sents) + ["en"] * len(en_sents))
 
-    print("Embedding with LaBSE …")
+    print(f"Embedding with {model_name} …")
     t0 = time.time()
-    embedder = Embedder(model_name="sentence-transformers/LaBSE")
+    embedder = Embedder(model_name=model_name)
     X = embedder.embed(all_texts, show_progress=True)
     print(f"Embedding done in {time.time() - t0:.1f}s")
 
@@ -94,7 +100,7 @@ def run_pilot(fi_path: str, en_path: str, out_path: str, n_pairs: int = 5000) ->
 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
-        json.dump({"model": "LaBSE", "n_pairs": n_pairs, "results": results}, f, indent=2)
+        json.dump({"model": model_name, "n_pairs": n_pairs, "results": results}, f, indent=2)
     print(f"\nSaved → {out_path}")
 
 
@@ -104,5 +110,6 @@ if __name__ == "__main__":
     parser.add_argument("--en", required=True)
     parser.add_argument("--out", default="outputs/pilot_phase1.json")
     parser.add_argument("--n-pairs", type=int, default=5000)
+    parser.add_argument("--model", default="sentence-transformers/LaBSE")
     args = parser.parse_args()
-    run_pilot(args.fi, args.en, args.out, n_pairs=args.n_pairs)
+    run_pilot(args.fi, args.en, args.out, n_pairs=args.n_pairs, model_name=args.model)

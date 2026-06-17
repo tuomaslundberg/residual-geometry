@@ -22,7 +22,13 @@ from pathlib import Path
 import numpy as np
 
 
-def run_pilot(fi_path: str, en_path: str, out_path: str, n_docs: int = 5000) -> None:
+def run_pilot(
+    fi_path: str,
+    en_path: str,
+    out_path: str,
+    n_docs: int = 5000,
+    model_name: str = "sentence-transformers/LaBSE",
+) -> None:
     from residual_geometry.data.loaders import load_hplt
     from residual_geometry.embed.encoder import Embedder
     from residual_geometry.erase import IdentityProjector, INLPEraser, MeanCenteringEraser
@@ -38,9 +44,9 @@ def run_pilot(fi_path: str, en_path: str, out_path: str, n_docs: int = 5000) -> 
     lang_labels = np.array(["fi"] * len(fi_texts) + ["en"] * len(en_texts))
     print(f"  FI: {len(fi_texts)}  EN: {len(en_texts)}")
 
-    print("Embedding with LaBSE …")
+    print(f"Embedding with {model_name} …")
     t0 = time.time()
-    embedder = Embedder(model_name="sentence-transformers/LaBSE")
+    embedder = Embedder(model_name=model_name)
     X = embedder.embed(all_texts, show_progress=True)
     print(f"Embedding done in {time.time() - t0:.1f}s")
 
@@ -92,7 +98,7 @@ def run_pilot(fi_path: str, en_path: str, out_path: str, n_docs: int = 5000) -> 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     with open(out_path, "w") as f:
         json.dump(
-            {"model": "LaBSE", "corpus": "hplt-v3", "n_docs": n_docs, "results": results},
+            {"model": model_name, "corpus": "hplt-v3", "n_docs": n_docs, "results": results},
             f,
             indent=2,
         )
@@ -105,5 +111,6 @@ if __name__ == "__main__":
     parser.add_argument("--en", required=True)
     parser.add_argument("--out", default="outputs/pilot_phase1_hplt.json")
     parser.add_argument("--n-docs", type=int, default=5000)
+    parser.add_argument("--model", default="sentence-transformers/LaBSE")
     args = parser.parse_args()
-    run_pilot(args.fi, args.en, args.out, n_docs=args.n_docs)
+    run_pilot(args.fi, args.en, args.out, n_docs=args.n_docs, model_name=args.model)
