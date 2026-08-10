@@ -34,12 +34,12 @@ module use /appl/local/csc/modulefiles
 module load pytorch/2.7
 
 # 2. Clone repo (no venv needed — runtime deps pre-installed in container)
-cd /scratch/project_462000999/tlundber/projects/
+cd /scratch/project_462001491/tlundber/projects/
 git clone git@github.com:tuomaslundberg/residual-geometry.git
 cd residual-geometry
 
 # 3. Install extras (scikit-dimension, dev deps) — runtime deps already in container
-export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
+export PYTHONUSERBASE=/scratch/project_462001491/tlundber/pythonuserbase
 python3 -m pip install --user --upgrade pip
 python3 -m pip install --user --no-build-isolation -e ".[dev]"
 
@@ -55,13 +55,13 @@ PYTHONPATH=src python3 -m pytest tests/ -v
 
 | Resource | Path |
 |----------|------|
-| Scratch root | `/scratch/project_462000999/tlundber/` |
-| Repo | `/scratch/project_462000999/tlundber/projects/residual-geometry/` |
-| User packages | `/scratch/project_462000999/tlundber/pythonuserbase/` |
-| Data (target) | `/scratch/project_462000999/tlundber/data/europarl/` |
+| Scratch root | `/scratch/project_462001491/tlundber/` |
+| Repo | `/scratch/project_462001491/tlundber/projects/residual-geometry/` |
+| User packages | `/scratch/project_462001491/tlundber/pythonuserbase/` |
+| Data (target) | `/scratch/project_462001491/tlundber/data/europarl/` |
 | Outputs | `residual-geometry/outputs/` |
 | SLURM logs | `residual-geometry/experiments/slurm/logs/` |
-| LUMI project | `project_462000999` |
+| LUMI project | `project_462001491` |
 | GPU partition | `small-g` |
 
 ---
@@ -99,8 +99,8 @@ src/residual_geometry/
 **Interactive:**
 ```bash
 PYTHONPATH=src python3 experiments/pilot_phase1.py \
-    --fi /scratch/project_462000999/tlundber/data/europarl/europarl.fi \
-    --en /scratch/project_462000999/tlundber/data/europarl/europarl.en \
+    --fi /scratch/project_462001491/tlundber/data/europarl/europarl.fi \
+    --en /scratch/project_462001491/tlundber/data/europarl/europarl.en \
     --out outputs/pilot_phase1.json \
     --n-pairs 5000
 ```
@@ -144,7 +144,7 @@ Conversion script: `scripts/prepare_data.py` — to be written.
 ## Session start checklist
 
 1. `module use /appl/local/csc/modulefiles && module load pytorch/2.7`
-2. `cd /scratch/project_462000999/tlundber/projects/residual-geometry`
+2. `cd /scratch/project_462001491/tlundber/projects/residual-geometry`
 3. `git pull` (sync with local changes)
 4. `PYTHONPATH=src python3 -m pytest tests/ -q` — confirm 23 pass
 5. Open `TODO.md` for current open tasks

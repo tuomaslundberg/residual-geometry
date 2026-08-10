@@ -4,56 +4,42 @@
 
 ---
 
-## State snapshot (2026-06-04)
+## State snapshot (2026-06-18)
 
-**Phase 1 pilot: done.** Gateway passed on both Europarl (parallel) and HPLT v3 (monolingual).
-Key finding: HPLT residual has TwoNN ID ≈ 19 (rich structure); Europarl ≈ 1.5 (near-degenerate, too homogeneous).
-HPLT is the right corpus for Phase 2. See `experiments/phase1_results.md`.
+**Sprint 2 complete.** XLM-R comparison and Phase 2 register pilot both done.
+Key findings in `experiments/sprint2_results.md`.
 
-**What's next: XLM-R comparison + Phase 2 pilot design.**
-
----
-
-## Immediate — LUMI setup
-
-- [x] **Clone repo on LUMI scratch** — `/scratch/project_462000999/tlundber/projects/residual-geometry/`
-- [x] **Install extras on LUMI** — `pip install --user --no-build-isolation -e ".[dev]"`; no venv needed
-- [x] **Run pytest on LUMI** — 23/23 pass (Python 3.11.0rc1, pytorch/2.7 container)
-- [x] **Fetch Europarl FI-EN data to scratch** — `data/europarl/Europarl.en-fi.{fi,en}`
+**Summer break.** Next sprint: read related work, design extensive probe grid.
+See "Next sprint" section below.
 
 ---
 
-## Immediate — Phase 1 pilot (gateway check) — DONE
+## Next sprint (post-summer)
 
-- [x] **Run Phase 1 pilot — Europarl** (LaBSE, 5k pairs, identity + mean + INLP): passed
-- [x] **Run Phase 1 pilot — HPLT v3** (LaBSE, 5k docs/lang, identity + mean + INLP): passed
-- [x] **SLURM scripts** — `sl-run-baseline` and `sl-run-hplt` with `SLURM_SUBMIT_DIR` fix
-
----
-
-## Short-term (Phase 2)
-
-- [ ] **XLM-R comparison** — run Phase 1 pilot with `FacebookAI/xlm-roberta-base` (or `sentence-transformers/paraphrase-multilingual-mpnet-base-v2`); compare TwoNN ID and probe selectivity
-- [ ] **Phase 2 pilot design** — decide candidate feature labels; implement `experiments/pilot_phase2.py`
-      Primary corpus: HPLT v3. Candidates: register (HPLT web-register field), formality, NE density,
-      dependency distance, morphological complexity (negative control)
-- [ ] **Visualisation** — UMAP of residual coloured by encoder, language, and candidate labels
-
----
-
-## LEACE (requires optional dep)
-
-- [ ] Confirm `concept-erasure` available on LUMI (`pip install concept-erasure` or from wheel)
-- [ ] Add LEACE to Phase 1 eraser sweep once dep confirmed
-- [ ] Add a test fixture that exercises `LEACEEraser` end-to-end
+- [ ] **Extensive probe grid** — encoders × erasers × feature axes × corpora:
+  - Encoders: LaBSE, XLM-R base, + at least one more (e5-multilingual or mpnet-multilingual)
+  - Erasure: Identity, Mean, INLP, LEACE (confirm LEACE dep first)
+  - Feature axes: register (done), morphological complexity (negative control, needs UD parse),
+    mean dependency distance (UD parse), NE density, sentence length (covariate)
+  - Corpora: HPLT v3 (current), infopankki (parallel, high quality), Tatoeba (informal contrast)
+  - Scale: 20k+ docs for better class coverage (SP=44 is too sparse at 5k)
+- [ ] **LEACE** — confirm `pip install concept-erasure` on LUMI; add to eraser sweep
+- [ ] **UD parsing** — run Turku Neural Parser on FI side; spaCy/Stanza on EN side;
+      extract morphological complexity and mean dependency distance as Phase 2 labels
+- [ ] **NE density** — run NER pipeline on FI+EN HPLT samples; compute NE token ratio per doc
+- [ ] **`--normalize-residual` flag** — add to pilot scripts for robustness check on TwoNN ID;
+      compare normalized vs raw residual results
+- [ ] **Visualisation** — UMAP of residual coloured by encoder, language, register label
+- [ ] **Cross-dataset validation** — fit INLP on Europarl → apply to HPLT → check language probe
+      (lightweight RQ1b operationalisation of cultural confound question)
 
 ---
 
 ## Infrastructure
 
-- [ ] Update `.gitignore` — add `outputs/`, `data/`, `*.npz`, `*.json` result files if not already
-- [ ] LUMI module documentation — record exact `module load` string used after first successful run;
-      add to `experiments/lumi-onboarding.md`
+- [x] `.gitignore` — `outputs/` and `/data/` correctly anchored
+- [x] LUMI module documentation — `experiments/lumi-onboarding.md` and `platform.md`
+- [ ] **Execute bit** — `chmod +x sl-run-xlmr sl-run-phase2` committed (pending user push)
 
 ---
 
@@ -61,14 +47,17 @@ HPLT is the right corpus for Phase 2. See `experiments/phase1_results.md`.
 
 - [x] Repo rename: `register-geometry` → `residual-geometry`; local folder + GitHub remote updated
 - [x] Package restructure: `src/residual_geometry/{embed,erase,analyse,eval,data}` created
-- [x] New erasers: `INLPEraser` (with `projection_matrix` + `n_directions_removed`),
-      `MeanCenteringEraser`, `MikolovProjection`, `LEACEEraser`
+- [x] New erasers: `INLPEraser`, `MeanCenteringEraser`, `MikolovProjection`, `LEACEEraser`
 - [x] New analysis: `participation_ratio`, `anisotropy`, `twonn_intrinsic_dim`, `divergence_stats`
 - [x] New eval: `language_probe` (selectivity), `linear_probe`, `bitext_retrieval`
-- [x] Data: `load_europarl`, `load_infopankki` loaders added
-- [x] Old `register_geometry` archived to `_archive/`
-- [x] 23 tests migrated (import paths only); all pass locally
-- [x] `experiments/pilot_phase1.py` runnable; `experiments/pilot_phase2.py` stub
-- [x] `pyproject.toml`: name → `residual-geometry`, added `scikit-dimension>=0.3`
-- [x] `README.md` rewritten
+- [x] Data: `load_europarl`, `load_infopankki`, `load_hplt` (+ `return_labels`, `min_confidence`)
+- [x] Old `register_geometry` artifact removed from repo
+- [x] 23 tests pass; `pyproject.toml` and `README.md` updated
+- [x] Phase 1 pilot — Europarl (LaBSE, 5k pairs): gateway passed
+- [x] Phase 1 pilot — HPLT v3 (LaBSE, 5k docs/lang): gateway passed; TwoNN ID ≈ 19
+- [x] Encoder comparison — XLM-R base on HPLT v3: language signal rank-1, TwoNN ID ≈ 22
+- [x] Phase 2 pilot — register probing on LaBSE + HPLT v3: register survives erasure,
+      RSA 0.35 (n.s.) → 0.85 (p<10⁻⁶) after mean centering
+- [x] `Embedder` fallback loading for non-ST HF models
+- [x] SLURM scripts: `sl-run-baseline`, `sl-run-hplt`, `sl-run-xlmr`, `sl-run-phase2`
 - [x] Overleaf thesis scaffold: all 8 chapters written, bibliography complete (22 entries)

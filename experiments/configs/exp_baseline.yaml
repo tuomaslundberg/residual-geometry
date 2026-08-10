@@ -7,7 +7,7 @@ model:
   device: auto
 
 data:
-  path: /scratch/project_462000999/tlundber/data/register-geometry/fi_en_docs.jsonl
+  path: /scratch/project_462001491/tlundber/data/register-geometry/fi_en_docs.jsonl
   languages: [fi, en]
   registers: [HI, ID, IN, IP, LY, NA, OP, SP]
 
@@ -22,5 +22,5 @@ evaluation:
   seed: 42
 
 output:
-  dir: /scratch/project_462000999/tlundber/outputs/register-geometry/baseline/
+  dir: /scratch/project_462001491/tlundber/outputs/register-geometry/baseline/
   save_embeddings: true

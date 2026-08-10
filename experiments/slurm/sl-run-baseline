@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=residual-geo-phase1
-#SBATCH --account=project_462000999
 #SBATCH --partition=small-g
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
@@ -9,6 +8,7 @@
 #SBATCH --time=02:00:00
 #SBATCH --output=experiments/slurm/logs/%x_%j.out
 #SBATCH --error=experiments/slurm/logs/%x_%j.err
+source ~/lumi-env.sh
 
 # If invoked directly (not via sbatch), archive previous logs and submit.
 if [ -z "$SLURM_JOB_ID" ]; then
@@ -49,11 +49,11 @@ module load pytorch/2.7
 # pre-installed in the pytorch/2.7 container.
 # PYTHONUSERBASE is set for any user-installed extras (scikit-dimension, etc.).
 # Use PYTHONPATH=src if running without an editable install.
-export PYTHONUSERBASE=/scratch/project_462000999/tlundber/pythonuserbase
+export PYTHONUSERBASE=$WORK/pythonuserbase
 export PYTHONPATH="$REPO/src:${PYTHONPATH:-}"
 
-FI=/scratch/project_462000999/tlundber/data/europarl/Europarl.en-fi.fi
-EN=/scratch/project_462000999/tlundber/data/europarl/Europarl.en-fi.en
+FI=$WORK/data/europarl/Europarl.en-fi.fi
+EN=$WORK/data/europarl/Europarl.en-fi.en
 
 # --- Run ---
 python3 experiments/pilot_phase1.py \
