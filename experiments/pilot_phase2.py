@@ -80,6 +80,15 @@ def _probe_axis(
     }
 
 
+def _balanced_indices(
+    labels: np.ndarray, classes: list[str], n_per_class: int, rng: np.random.Generator
+) -> np.ndarray:
+    """Seeded draw of exactly n_per_class indices per class, without replacement."""
+    idx = [rng.choice(np.flatnonzero(labels == c), size=n_per_class, replace=False)
+           for c in classes]
+    return np.sort(np.concatenate(idx))
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -92,20 +101,29 @@ def run_pilot(
     model_name: str = "sentence-transformers/LaBSE",
     min_confidence: float = 0.4,
     cache_embeddings: bool = True,
+    exclude_mt: bool = False,
+    single_register: bool = False,
+    exclude_registers: tuple[str, ...] = (),
+    per_class: int | None = None,
+    draw_seed: int = 0,
 ) -> None:
+    """per_class: None = all filtered docs (unbalanced, as in Sprint 2);
+    0 = balanced at the smallest shared class; N > 0 = balanced at N per class
+    per language. Balanced runs read whole files (n_docs is ignored)."""
     from residual_geometry.data.loaders import load_hplt
     from residual_geometry.embed.encoder import Embedder
     from residual_geometry.erase import IdentityProjector, INLPEraser, MeanCenteringEraser
     from residual_geometry.eval.probing import language_probe
 
     # --- Load ---
-    print(f"Loading HPLT v3 (min_confidence={min_confidence}, max_docs={n_docs}) …")
-    fi_texts_all, fi_labels_all = load_hplt(
-        fi_path, max_docs=n_docs, return_labels=True, min_confidence=min_confidence
-    )
-    en_texts_all, en_labels_all = load_hplt(
-        en_path, max_docs=n_docs, return_labels=True, min_confidence=min_confidence
-    )
+    if per_class is not None:
+        n_docs = None
+    load_kw = dict(return_labels=True, min_confidence=min_confidence,
+                   exclude_mt=exclude_mt, single_register=single_register)
+    print(f"Loading HPLT v3 (min_confidence={min_confidence}, max_docs={n_docs}, "
+          f"exclude_mt={exclude_mt}, single_register={single_register}) …")
+    fi_texts_all, fi_labels_all = load_hplt(fi_path, max_docs=n_docs, **load_kw)
+    en_texts_all, en_labels_all = load_hplt(en_path, max_docs=n_docs, **load_kw)
 
     fi_labels_arr = np.array(fi_labels_all)
     en_labels_arr = np.array(en_labels_all)
@@ -115,7 +133,9 @@ def run_pilot(
     print(f"  EN register distribution: {dict(sorted(Counter(en_labels_all).items()))}")
 
     # Filter to registers present in both languages
-    shared_registers = sorted(set(fi_labels_arr) & set(en_labels_arr))
+    shared_registers = sorted(
+        str(r) for r in set(fi_labels_arr) & set(en_labels_arr) if r not in exclude_registers
+    )
     print(f"  Shared registers: {shared_registers}")
 
     fi_mask = np.isin(fi_labels_arr, shared_registers)
@@ -125,6 +145,20 @@ def run_pilot(
     fi_labels = fi_labels_arr[fi_mask]
     en_labels = en_labels_arr[en_mask]
     print(f"  After filtering: FI={len(fi_texts)}  EN={len(en_texts)}")
+
+    if per_class is not None:
+        smallest = min(min(np.sum(fi_labels == c), np.sum(en_labels == c))
+                       for c in shared_registers)
+        n_per_class = per_class or int(smallest)
+        if n_per_class > smallest:
+            raise ValueError(f"per_class={n_per_class} exceeds smallest class ({smallest})")
+        rng = np.random.default_rng(draw_seed)
+        fi_idx = _balanced_indices(fi_labels, shared_registers, n_per_class, rng)
+        en_idx = _balanced_indices(en_labels, shared_registers, n_per_class, rng)
+        fi_texts = [fi_texts[i] for i in fi_idx]
+        en_texts = [en_texts[i] for i in en_idx]
+        fi_labels, en_labels = fi_labels[fi_idx], en_labels[en_idx]
+        print(f"  Balanced draw (seed {draw_seed}): {n_per_class} per register per language")
 
     # --- Embed ---
     all_texts = fi_texts + en_texts
@@ -210,6 +244,12 @@ def run_pilot(
         "n_docs_en": len(en_texts),
         "shared_registers": shared_registers,
         "min_confidence": min_confidence,
+        "exclude_mt": exclude_mt,
+        "single_register": single_register,
+        "per_class": None if per_class is None else int(len(fi_labels) // len(shared_registers)),
+        "draw_seed": draw_seed if per_class is not None else None,
+        "class_counts_fi": {k: int(v) for k, v in sorted(Counter(fi_labels.tolist()).items())},
+        "class_counts_en": {k: int(v) for k, v in sorted(Counter(en_labels.tolist()).items())},
         "results": results,
     }
 
@@ -227,6 +267,15 @@ if __name__ == "__main__":
     parser.add_argument("--n-docs", type=int, default=5000)
     parser.add_argument("--model", default="sentence-transformers/LaBSE")
     parser.add_argument("--min-confidence", type=float, default=0.4)
+    parser.add_argument("--exclude-mt", action="store_true",
+                        help="Drop documents labelled machine-translated (MT)")
+    parser.add_argument("--single-register", action="store_true",
+                        help="Keep only documents with exactly one main register")
+    parser.add_argument("--exclude-registers", default="",
+                        help="Comma-separated registers to leave out, e.g. LY")
+    parser.add_argument("--per-class", type=int, default=None,
+                        help="Balanced draw: N per register per language (0 = smallest class)")
+    parser.add_argument("--draw-seed", type=int, default=0)
     parser.add_argument("--no-cache", action="store_true",
                         help="Do not read or write the embedding cache")
     args = parser.parse_args()
@@ -236,4 +285,9 @@ if __name__ == "__main__":
         model_name=args.model,
         min_confidence=args.min_confidence,
         cache_embeddings=not args.no_cache,
+        exclude_mt=args.exclude_mt,
+        single_register=args.single_register,
+        exclude_registers=tuple(r for r in args.exclude_registers.split(",") if r),
+        per_class=args.per_class,
+        draw_seed=args.draw_seed,
     )

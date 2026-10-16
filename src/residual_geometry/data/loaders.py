@@ -55,6 +55,8 @@ def load_hplt(
     max_docs: int | None = None,
     return_labels: bool = False,
     min_confidence: float = 0.0,
+    exclude_mt: bool = False,
+    single_register: bool = False,
 ) -> "list[str] | tuple[list[str], list[str]]":
     """Load texts (and optionally register labels) from an HPLT v3 exploded JSONL file.
 
@@ -67,6 +69,11 @@ def load_hplt(
         min_confidence: Minimum probability of the argmax CORE class to include a
             document. Documents below this threshold are silently skipped.
             Recommended value: 0.4 (CORE-optimised threshold for EN and FI).
+        exclude_mt: Skip documents whose ``MT`` (machine-translated) probability
+            reaches ``min_confidence``. Only applies with ``return_labels=True``.
+        single_register: Keep only documents where exactly one main CORE class
+            reaches ``min_confidence`` (no multi-register documents).
+            Only applies with ``return_labels=True``.
 
     Returns:
         ``list[str]`` when ``return_labels=False`` (default, backwards-compatible).
@@ -87,6 +94,10 @@ def load_hplt(
                 reg_probs = d.get("web-register", {})
                 core = {k: v for k, v in reg_probs.items() if k in _CORE_MAIN}
                 if not core:
+                    continue
+                if exclude_mt and reg_probs.get("MT", 0.0) >= min_confidence:
+                    continue
+                if single_register and sum(v >= min_confidence for v in core.values()) != 1:
                     continue
                 top_label = max(core, key=core.get)  # type: ignore[arg-type]
                 if core[top_label] < min_confidence:
