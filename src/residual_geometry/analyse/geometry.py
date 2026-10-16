@@ -149,6 +149,28 @@ def rsa(A: np.ndarray, B: np.ndarray, metric: str = "cosine") -> tuple[float, fl
     return float(corr), float(pval)
 
 
+def permutation_summary(
+    observed: float, null: np.ndarray, higher_is_better: bool = True
+) -> dict:
+    """Null distribution summary and one-sided permutation p-value.
+
+    p = (1 + #null at least as extreme as observed) / (1 + n_permutations).
+    "Extreme" means >= observed when higher_is_better (RSA), <= otherwise
+    (Procrustes disparity, where lower means better alignment).
+    """
+    null = np.asarray(null, dtype=np.float64)
+    if null.size == 0:
+        return {}
+    n_extreme = int(np.sum(null >= observed if higher_is_better else null <= observed))
+    return {
+        "null_mean": round(float(null.mean()), 4),
+        "null_p05": round(float(np.percentile(null, 5)), 4),
+        "null_p95": round(float(np.percentile(null, 95)), 4),
+        "n_permutations": int(null.size),
+        "permutation_pvalue": round((1 + n_extreme) / (1 + null.size), 6),
+    }
+
+
 def evaluate_geometry(
     X_fi: np.ndarray,
     labels_fi: np.ndarray,

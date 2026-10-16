@@ -34,7 +34,7 @@ def _probe_axis(
     fi_labels: np.ndarray,
     en_labels: np.ndarray,
     shared_classes: list[str],
-    n_permutations: int = 200,
+    n_permutations: int = 1000,
 ) -> dict:
     """Run the full probing suite for one feature axis.
 
@@ -44,10 +44,15 @@ def _probe_axis(
     - crosslingual_macro_f1: classifier trained on FI, evaluated on EN
     - per_class_f1: per-class breakdown for cross-lingual transfer
     - procrustes_disparity: geometric distance between FI and EN centroid spaces
-    - rsa_correlation / rsa_pvalue: RSA between FI and EN centroid RDMs
+    - rsa_correlation: RSA between FI and EN centroid RDMs
+    - rsa_spearman_pvalue: scipy's Spearman p-value; treats the k(k-1)/2 centroid
+      pairs as independent, which they are not — not a valid significance test
+    - rsa_null / procrustes_null: label-permutation null (labels shuffled within
+      each language, centroids recomputed): mean, 5th/95th percentile and a
+      one-sided permutation p-value
     """
     from residual_geometry.eval.probing import cross_lingual_transfer, linear_probe
-    from residual_geometry.analyse.geometry import evaluate_geometry
+    from residual_geometry.analyse.geometry import evaluate_geometry, permutation_summary
 
     fi_acc = linear_probe(X_fi, fi_labels, cv=5)
     en_acc = linear_probe(X_en, en_labels, cv=5)
@@ -65,7 +70,13 @@ def _probe_axis(
         "per_class_f1": {k: round(v, 4) for k, v in transfer.per_class_f1.items()},
         "procrustes_disparity": round(geometry.procrustes_disparity, 4),
         "rsa_correlation": round(geometry.rsa_correlation, 4),
-        "rsa_pvalue": round(geometry.rsa_pvalue, 6),
+        "rsa_spearman_pvalue": round(geometry.rsa_pvalue, 6),
+        "rsa_null": permutation_summary(
+            geometry.rsa_correlation, geometry.null_rsa, higher_is_better=True
+        ),
+        "procrustes_null": permutation_summary(
+            geometry.procrustes_disparity, geometry.null_procrustes, higher_is_better=False
+        ),
     }
 
 
@@ -162,6 +173,14 @@ def run_pilot(
             f"transfer macro-F1={register_metrics['crosslingual_macro_f1']:.3f}  "
             f"Procrustes={register_metrics['procrustes_disparity']:.3f}"
         )
+        for key, null_key in (("rsa_correlation", "rsa_null"),
+                              ("procrustes_disparity", "procrustes_null")):
+            nl = register_metrics[null_key]
+            print(
+                f"    {key}={register_metrics[key]:.3f}  null mean={nl['null_mean']:.3f} "
+                f"[p05={nl['null_p05']:.3f}, p95={nl['null_p95']:.3f}]  "
+                f"perm p={nl['permutation_pvalue']:.4f}"
+            )
 
         # -----------------------------------------------------------------
         # To add a further probe axis, load labels externally and call:

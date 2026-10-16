@@ -6,6 +6,7 @@ import pytest
 from residual_geometry.analyse.geometry import (
     GeometryResult,
     evaluate_geometry,
+    permutation_summary,
     procrustes_disparity,
     register_centroids,
     rsa,
@@ -76,3 +77,36 @@ def test_evaluate_geometry_runs(rng):
     assert -1.0 <= result.rsa_correlation <= 1.0
     assert len(result.null_procrustes) == 20
     assert len(result.null_rsa) == 20
+
+
+def test_permutation_summary_direction():
+    null = np.array([0.1, 0.2, 0.3, 0.9])
+    hi = permutation_summary(0.85, null, higher_is_better=True)
+    assert hi["permutation_pvalue"] == pytest.approx(2 / 5)  # 0.9 is >= 0.85
+    lo = permutation_summary(0.15, null, higher_is_better=False)
+    assert lo["permutation_pvalue"] == pytest.approx(2 / 5)  # 0.1 is <= 0.15
+    assert hi["n_permutations"] == 4
+    assert permutation_summary(0.5, np.array([])) == {}
+
+
+def test_probe_axis_keeps_nulls(rng):
+    """The Phase 2 pilot must report the permutation nulls, not drop them."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).parents[1] / "experiments" / "pilot_phase2.py"
+    spec = importlib.util.spec_from_file_location("pilot_phase2", path)
+    pilot = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pilot)
+
+    X_fi, labels_fi = _make_labeled(rng)
+    X_en, labels_en = _make_labeled(rng)
+    out = pilot._probe_axis(
+        X_fi, X_en, labels_fi, labels_en, REGISTERS, n_permutations=20
+    )
+    assert "rsa_spearman_pvalue" in out
+    for key in ("rsa_null", "procrustes_null"):
+        nl = out[key]
+        assert nl["n_permutations"] == 20
+        assert nl["null_p05"] <= nl["null_mean"] <= nl["null_p95"]
+        assert 1 / 21 <= nl["permutation_pvalue"] <= 1.0
