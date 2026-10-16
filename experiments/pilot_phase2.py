@@ -91,6 +91,7 @@ def run_pilot(
     n_docs: int = 5000,
     model_name: str = "sentence-transformers/LaBSE",
     min_confidence: float = 0.4,
+    cache_embeddings: bool = True,
 ) -> None:
     from residual_geometry.data.loaders import load_hplt
     from residual_geometry.embed.encoder import Embedder
@@ -132,7 +133,13 @@ def run_pilot(
     print(f"\nEmbedding {len(all_texts)} texts with {model_name} …")
     t0 = time.time()
     embedder = Embedder(model_name=model_name)
-    X = embedder.embed(all_texts, show_progress=True)
+    print(f"  device: {embedder.device}")
+    if cache_embeddings:
+        from residual_geometry.embed.cache import EmbeddingCache
+
+        X = EmbeddingCache(model_name).embed(embedder, all_texts, show_progress=True)
+    else:
+        X = embedder.embed(all_texts, show_progress=True)
     print(f"Embedding done in {time.time() - t0:.1f}s  shape={X.shape}")
 
     # --- Erasers ---
@@ -220,10 +227,13 @@ if __name__ == "__main__":
     parser.add_argument("--n-docs", type=int, default=5000)
     parser.add_argument("--model", default="sentence-transformers/LaBSE")
     parser.add_argument("--min-confidence", type=float, default=0.4)
+    parser.add_argument("--no-cache", action="store_true",
+                        help="Do not read or write the embedding cache")
     args = parser.parse_args()
     run_pilot(
         args.fi, args.en, args.out,
         n_docs=args.n_docs,
         model_name=args.model,
         min_confidence=args.min_confidence,
+        cache_embeddings=not args.no_cache,
     )
