@@ -85,6 +85,8 @@ OP 0.52/0.42/0.48 · IP 0.37/0.43/0.45 · HI 0.34/0.21/0.13 · ID 0.12/0.20/0.22
 | Mean | 0.109 | **0.851** | <0.000001 |
 | INLP | 0.136 | 0.547 | 0.010 |
 
+*p-values above are Spearman's, which treat the 21 pairs as independent. Superseded by the permutation nulls below (2026-10-16).*
+
 **Headline finding:** RSA jumps from 0.355 (n.s.) to 0.851 (p < 10⁻⁶) after mean centering.
 The FI/EN register centroid geometry is not significantly aligned in the full space, but
 becomes very strongly aligned after removing the language direction.
@@ -99,6 +101,67 @@ Procrustes is unchanged (0.109 → 0.109) because it optimally rotates before me
 disparity — it is invariant to the mean shift. INLP gives lower RSA than mean centering
 (0.547 vs 0.851) and slightly higher Procrustes disparity (0.136) — the extra directions
 INLP removes apparently carry some cross-lingual register alignment.
+
+
+---
+
+## Permutation nulls for the centroid geometry — 2026-10-16
+
+*Re-run of the Phase 2 pilot (LaBSE + HPLT v3, same 5 000 + 4 999 docs, same seed) with the
+label-permutation nulls reported instead of discarded. Output: `outputs/pilot_phase2_nulls.json`
+(job 22919409). The observed scores reproduce the June run exactly.*
+
+**What the null is.** Within each language, register labels are shuffled among the documents,
+centroids are recomputed and RSA / Procrustes rescored; 1 000 times. That gives the score a
+*meaningless* grouping of the same documents, with the same class sizes, reaches under the same
+eraser — the chance level. The permutation p-value is the share of shuffles scoring at least as
+well as the real labels (+1 correction; floor 1/1001 ≈ 0.001).
+
+### RSA (higher = more aligned)
+
+| Condition | Observed | Chance mean | Chance 5–95 % | Perm. p |
+|---|---|---|---|---|
+| Identity | 0.354 | 0.696 | 0.578–0.796 | 1.000 |
+| Mean | **0.851** | 0.413 | 0.130–0.662 | **0.001** |
+| INLP | 0.547 | 0.695 | 0.578–0.795 | 0.988 |
+
+### Procrustes disparity (lower = more aligned)
+
+| Condition | Observed | Chance mean | Chance 5–95 % | Perm. p |
+|---|---|---|---|---|
+| Identity | 0.109 | 0.185 | 0.126–0.254 | 0.017 |
+| Mean | 0.109 | 0.185 | 0.126–0.254 | 0.017 |
+| INLP | 0.136 | 0.185 | 0.124–0.253 | 0.106 |
+
+**Reading.**
+
+- **After mean centering, 0.851 is well above chance.** The best of 1 000 shuffles stays below it
+  (95th percentile 0.66). So mean centering does *not* raise the score for any grouping
+  whatsoever: register lines up across FI and EN better than meaningless groupings do.
+- **But the chance level is not low, and it is not the same under each eraser.** Shuffled
+  labels score ~0.70 with the language signal in place, ~0.41 after mean centering. A raw RSA
+  number therefore has no fixed meaning here; it must be read against its own null.
+- **Without erasure, real registers score *below* chance (0.354 vs 0.696, p = 1.0).** The
+  "0.355 → 0.851 jump" is not a move from "no alignment" to "strong alignment": the identity
+  baseline is depressed below what random groupings get. Compare each score to its own chance
+  level, not the two observed scores to each other.
+- **INLP's 0.547 is below chance (p = 0.99).** The Sprint 2 table's p = 0.010 for INLP came from
+  the Spearman test, which treats the 21 centroid pairs as independent; it does not hold up.
+- **Procrustes** is modestly above chance under identity and mean (identical, since it is
+  translation-invariant; p = 0.017), not under INLP (p = 0.11).
+
+**Why random groupings score so high: class sizes.** A centroid of a small class is noisier,
+so it lies farther from the others. Both languages have the same small classes (SP 44/118,
+ID 138/46, HI 145/142) and the same large ones (IN, NA), so the two distance matrices agree on
+"which centroids are far off" even when the labels mean nothing. A simulation confirms this:
+pure Gaussian noise plus a language mean, no register signal, real class sizes → RSA ≈ 0.74
+(identity) / 0.67 (mean); same simulation with equal class sizes → ≈ 0.00 / 0.00. Part of what
+centroid RSA measures on this data is therefore class imbalance, not register.
+
+**Caveats (stated, not fixed).** 7 centroids → 21 pairwise distances, effectively fewer;
+SP is nearly empty (n = 44 FI, F1 0.0). p = 0.001 is the floor at 1 000 permutations. The
+class-size effect would disappear with class-balanced subsampling (equal n per register per
+language) — a design choice for the next sprint, together with the 20k+ scale-up.
 
 ---
 
