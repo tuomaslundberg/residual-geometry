@@ -54,3 +54,12 @@ def test_balanced_indices_equal_per_class():
     assert {c: int(np.sum(labels[idx] == c)) for c in "ABC"} == {"A": 7, "B": 7, "C": 7}
     again = pilot._balanced_indices(labels, ["A", "B", "C"], 7, np.random.default_rng(1))
     assert np.array_equal(idx, again)
+
+
+def test_europarl_drops_pairs_not_lines(tmp_path):
+    from residual_geometry.data.loaders import load_europarl
+
+    (tmp_path / "fi").write_text("yksi\n\nkolme\n", encoding="utf-8")
+    (tmp_path / "en").write_text("one\ntwo\nthree\n", encoding="utf-8")
+    fi, en = load_europarl(tmp_path / "fi", tmp_path / "en")
+    assert list(zip(fi, en)) == [("yksi", "one"), ("kolme", "three")]

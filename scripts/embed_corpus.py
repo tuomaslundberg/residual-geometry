@@ -1,5 +1,8 @@
 """Embed every document of one or more HPLT JSONL files into the embedding cache.
 
+Files not ending in .jsonl are read as plain text, one segment per line
+(e.g. a sampled Europarl side).
+
 Filter-independent: later runs choose any subset (register rule, MT handling,
 balanced draws) and read their vectors from the cache without re-embedding.
 
@@ -26,6 +29,10 @@ if __name__ == "__main__":
     cache = EmbeddingCache(args.model)
     for path in args.files:
         t0 = time.time()
-        texts = load_hplt(path)
+        if path.endswith(".jsonl"):
+            texts = load_hplt(path)
+        else:
+            with open(path, encoding="utf-8") as f:
+                texts = [line.strip() for line in f if line.strip()]
         X = cache.embed(embedder, texts, show_progress=True)
         print(f"{path}: {X.shape} in {time.time() - t0:.0f}s; cache now {len(cache)} texts")

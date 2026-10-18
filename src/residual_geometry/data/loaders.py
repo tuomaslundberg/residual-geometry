@@ -24,10 +24,10 @@ def load_europarl(
     fi_lines = Path(fi_path).read_text(encoding="utf-8").splitlines()
     en_lines = Path(en_path).read_text(encoding="utf-8").splitlines()
 
-    fi_lines = [l.strip() for l in fi_lines if l.strip()]
-    en_lines = [l.strip() for l in en_lines if l.strip()]
-
-    pairs = list(zip(fi_lines, en_lines))
+    # Pair first, then drop pairs with an empty side: filtering each file on its
+    # own would shift every later pair after the first unmatched empty line.
+    pairs = [(f.strip(), e.strip()) for f, e in zip(fi_lines, en_lines)
+             if f.strip() and e.strip()]
     if max_pairs is not None:
         pairs = pairs[:max_pairs]
 
@@ -106,3 +106,39 @@ def load_hplt(
             texts.append(text)
 
     return (texts, labels) if return_labels else texts
+
+
+def load_hplt_records(path: str | Path, min_confidence: float = 0.4) -> list[dict]:
+    """Every non-empty document of an HPLT exploded JSONL file, with reading metadata.
+
+    Texts are stripped exactly as in ``load_hplt``, so they share embedding-cache keys.
+    Fields: ``text``, ``url``, ``host``, ``tld``, ``wds`` (document quality score,
+    ``doc_scores[0]``), ``mt`` (MT probability >= min_confidence), ``registers`` (main
+    CORE classes >= min_confidence) and ``register`` (the single main class, ``"hybrid"``
+    when several reach the threshold, ``"none"`` when none does).
+    """
+    from urllib.parse import urlsplit
+
+    records: list[dict] = []
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            d = json.loads(line)
+            text = d.get("text", "").strip()
+            if not text:
+                continue
+            probs = d.get("web-register", {}) or {}
+            regs = sorted(k for k, v in probs.items() if k in _CORE_MAIN and v >= min_confidence)
+            url = d.get("u", "")
+            host = (urlsplit(url).hostname or "").lower()
+            scores = d.get("doc_scores") or [None]
+            records.append({
+                "text": text,
+                "url": url,
+                "host": host,
+                "tld": host.rsplit(".", 1)[-1] if "." in host else "",
+                "wds": scores[0],
+                "mt": probs.get("MT", 0.0) >= min_confidence,
+                "registers": regs,
+                "register": regs[0] if len(regs) == 1 else ("hybrid" if regs else "none"),
+            })
+    return records

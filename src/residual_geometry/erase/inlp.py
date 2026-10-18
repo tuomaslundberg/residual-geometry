@@ -27,12 +27,20 @@ class INLPEraser(LanguageProjector):
         self.min_accuracy = min_accuracy
         self._P: np.ndarray | None = None
         self._n_directions_removed: int = 0
+        self._directions: list[np.ndarray] = []
 
     @property
     def projection_matrix(self) -> np.ndarray:
         if self._P is None:
             raise RuntimeError("Call fit() before accessing projection_matrix.")
         return self._P
+
+    @property
+    def directions(self) -> np.ndarray:
+        """Unit vectors of the removed classifier directions, in removal order, (k, d)."""
+        if self._P is None:
+            raise RuntimeError("Call fit() before accessing directions.")
+        return np.array(self._directions).reshape(-1, self._P.shape[0])
 
     @property
     def n_directions_removed(self) -> int:
@@ -46,6 +54,7 @@ class INLPEraser(LanguageProjector):
         P_composed = np.eye(dim, dtype=np.float64)
         X_iter = X.astype(np.float64)
         n_dirs = 0
+        self._directions = []
 
         for iteration in range(self.n_iterations):
             clf = LogisticRegression(max_iter=1000, C=1.0, solver="lbfgs")
@@ -62,6 +71,7 @@ class INLPEraser(LanguageProjector):
                 if norm_sq < 1e-10:
                     continue
                 P_row = np.eye(dim) - np.outer(w, w) / norm_sq
+                self._directions.append(w / np.sqrt(norm_sq))
                 P_composed = P_row @ P_composed
                 X_iter = X_iter @ P_row.T
                 n_dirs += 1

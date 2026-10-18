@@ -1,0 +1,961 @@
+{
+  "model": "FacebookAI/xlm-roberta-base",
+  "n_docs": {
+    "fi": 83468,
+    "en": 94403
+  },
+  "n_parallel_pairs": 20000,
+  "inlp_directions_removed": 1,
+  "directions": {
+    "cos_web_parallel": 0.918,
+    "web_gap_norm": 0.0584,
+    "parallel_gap_norm": 0.0657,
+    "mean_doc_norm": 1.0,
+    "web_direction_inside_inlp_subspace": 1.0,
+    "parallel_direction_inside_inlp_subspace": 0.917,
+    "cultural_direction_inside_inlp_subspace": 0.398
+  },
+  "web language direction": {
+    "fi": {
+      "spearman_log_words": -0.146,
+      "spearman_wds": -0.02,
+      "deciles": [
+        {
+          "decile": 1,
+          "score_range": [
+            -0.027,
+            0.028
+          ],
+          "median_words": 918,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.433,
+            "com": 0.383,
+            "net": 0.063,
+            "eu": 0.021,
+            "org": 0.027
+          },
+          "top_registers": {
+            "NA": 0.322,
+            "IN": 0.177,
+            "hybrid": 0.151,
+            "IP": 0.136
+          }
+        },
+        {
+          "decile": 2,
+          "score_range": [
+            0.028,
+            0.029
+          ],
+          "median_words": 759,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.461,
+            "com": 0.376,
+            "net": 0.069,
+            "eu": 0.013,
+            "org": 0.021
+          },
+          "top_registers": {
+            "NA": 0.428,
+            "hybrid": 0.145,
+            "IN": 0.117,
+            "IP": 0.115
+          }
+        },
+        {
+          "decile": 3,
+          "score_range": [
+            0.029,
+            0.03
+          ],
+          "median_words": 715,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.485,
+            "com": 0.364,
+            "net": 0.067,
+            "eu": 0.011,
+            "org": 0.023
+          },
+          "top_registers": {
+            "NA": 0.421,
+            "hybrid": 0.163,
+            "IP": 0.119,
+            "IN": 0.115
+          }
+        },
+        {
+          "decile": 4,
+          "score_range": [
+            0.03,
+            0.031
+          ],
+          "median_words": 696,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.523,
+            "com": 0.331,
+            "net": 0.064,
+            "eu": 0.011,
+            "org": 0.022
+          },
+          "top_registers": {
+            "NA": 0.399,
+            "hybrid": 0.174,
+            "IN": 0.119,
+            "OP": 0.118
+          }
+        },
+        {
+          "decile": 5,
+          "score_range": [
+            0.031,
+            0.031
+          ],
+          "median_words": 679,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.551,
+            "com": 0.317,
+            "net": 0.055,
+            "eu": 0.009,
+            "org": 0.02
+          },
+          "top_registers": {
+            "NA": 0.395,
+            "hybrid": 0.175,
+            "IN": 0.14,
+            "IP": 0.116
+          }
+        },
+        {
+          "decile": 6,
+          "score_range": [
+            0.031,
+            0.032
+          ],
+          "median_words": 645,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.589,
+            "com": 0.294,
+            "net": 0.054,
+            "eu": 0.007,
+            "org": 0.018
+          },
+          "top_registers": {
+            "NA": 0.367,
+            "hybrid": 0.188,
+            "IN": 0.144,
+            "IP": 0.123
+          }
+        },
+        {
+          "decile": 7,
+          "score_range": [
+            0.032,
+            0.033
+          ],
+          "median_words": 626,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.621,
+            "com": 0.26,
+            "net": 0.048,
+            "eu": 0.011,
+            "org": 0.02
+          },
+          "top_registers": {
+            "NA": 0.345,
+            "hybrid": 0.196,
+            "IN": 0.16,
+            "IP": 0.127
+          }
+        },
+        {
+          "decile": 8,
+          "score_range": [
+            0.033,
+            0.033
+          ],
+          "median_words": 602,
+          "median_wds": 9.2,
+          "tld_share": {
+            "fi": 0.665,
+            "com": 0.234,
+            "net": 0.047,
+            "eu": 0.008,
+            "org": 0.014
+          },
+          "top_registers": {
+            "NA": 0.329,
+            "hybrid": 0.2,
+            "IN": 0.166,
+            "OP": 0.127
+          }
+        },
+        {
+          "decile": 9,
+          "score_range": [
+            0.033,
+            0.034
+          ],
+          "median_words": 585,
+          "median_wds": 9.2,
+          "tld_share": {
+            "fi": 0.72,
+            "com": 0.19,
+            "net": 0.038,
+            "eu": 0.009,
+            "org": 0.015
+          },
+          "top_registers": {
+            "NA": 0.319,
+            "hybrid": 0.197,
+            "IN": 0.193,
+            "IP": 0.127
+          }
+        },
+        {
+          "decile": 10,
+          "score_range": [
+            0.034,
+            0.042
+          ],
+          "median_words": 578,
+          "median_wds": 9.2,
+          "tld_share": {
+            "fi": 0.788,
+            "com": 0.147,
+            "net": 0.029,
+            "eu": 0.004,
+            "org": 0.013
+          },
+          "top_registers": {
+            "NA": 0.282,
+            "IN": 0.28,
+            "hybrid": 0.176,
+            "IP": 0.121
+          }
+        }
+      ]
+    },
+    "en": {
+      "spearman_log_words": 0.054,
+      "spearman_wds": -0.074,
+      "deciles": [
+        {
+          "decile": 1,
+          "score_range": [
+            -0.038,
+            -0.03
+          ],
+          "median_words": 813,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.596,
+            "org": 0.12,
+            "uk": 0.07,
+            "edu": 0.032,
+            "au": 0.019
+          },
+          "top_registers": {
+            "IN": 0.402,
+            "hybrid": 0.295,
+            "OP": 0.155,
+            "NA": 0.082
+          }
+        },
+        {
+          "decile": 2,
+          "score_range": [
+            -0.03,
+            -0.029
+          ],
+          "median_words": 860,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.626,
+            "org": 0.121,
+            "uk": 0.056,
+            "edu": 0.025,
+            "au": 0.019
+          },
+          "top_registers": {
+            "IN": 0.355,
+            "hybrid": 0.32,
+            "OP": 0.137,
+            "NA": 0.123
+          }
+        },
+        {
+          "decile": 3,
+          "score_range": [
+            -0.029,
+            -0.028
+          ],
+          "median_words": 875,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.641,
+            "org": 0.117,
+            "uk": 0.043,
+            "edu": 0.023,
+            "au": 0.015
+          },
+          "top_registers": {
+            "IN": 0.33,
+            "hybrid": 0.327,
+            "NA": 0.143,
+            "OP": 0.136
+          }
+        },
+        {
+          "decile": 4,
+          "score_range": [
+            -0.028,
+            -0.028
+          ],
+          "median_words": 896,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.656,
+            "org": 0.113,
+            "uk": 0.038,
+            "edu": 0.021,
+            "au": 0.013
+          },
+          "top_registers": {
+            "IN": 0.323,
+            "hybrid": 0.319,
+            "NA": 0.16,
+            "OP": 0.133
+          }
+        },
+        {
+          "decile": 5,
+          "score_range": [
+            -0.028,
+            -0.027
+          ],
+          "median_words": 929,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.671,
+            "org": 0.106,
+            "uk": 0.035,
+            "edu": 0.019,
+            "au": 0.014
+          },
+          "top_registers": {
+            "hybrid": 0.334,
+            "IN": 0.298,
+            "NA": 0.171,
+            "OP": 0.128
+          }
+        },
+        {
+          "decile": 6,
+          "score_range": [
+            -0.027,
+            -0.027
+          ],
+          "median_words": 938,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.668,
+            "org": 0.107,
+            "uk": 0.035,
+            "edu": 0.018,
+            "au": 0.014
+          },
+          "top_registers": {
+            "hybrid": 0.337,
+            "IN": 0.294,
+            "NA": 0.18,
+            "OP": 0.126
+          }
+        },
+        {
+          "decile": 7,
+          "score_range": [
+            -0.027,
+            -0.026
+          ],
+          "median_words": 958,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.679,
+            "org": 0.1,
+            "uk": 0.034,
+            "edu": 0.018,
+            "au": 0.012
+          },
+          "top_registers": {
+            "hybrid": 0.322,
+            "IN": 0.291,
+            "NA": 0.195,
+            "OP": 0.119
+          }
+        },
+        {
+          "decile": 8,
+          "score_range": [
+            -0.026,
+            -0.026
+          ],
+          "median_words": 958,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.684,
+            "org": 0.092,
+            "uk": 0.028,
+            "edu": 0.015,
+            "au": 0.011
+          },
+          "top_registers": {
+            "hybrid": 0.311,
+            "IN": 0.294,
+            "NA": 0.197,
+            "OP": 0.12
+          }
+        },
+        {
+          "decile": 9,
+          "score_range": [
+            -0.026,
+            -0.024
+          ],
+          "median_words": 962,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.686,
+            "org": 0.087,
+            "uk": 0.024,
+            "edu": 0.012,
+            "au": 0.01
+          },
+          "top_registers": {
+            "IN": 0.302,
+            "hybrid": 0.298,
+            "NA": 0.19,
+            "OP": 0.119
+          }
+        },
+        {
+          "decile": 10,
+          "score_range": [
+            -0.024,
+            -0.003
+          ],
+          "median_words": 946,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.636,
+            "org": 0.085,
+            "uk": 0.023,
+            "edu": 0.015,
+            "au": 0.011
+          },
+          "top_registers": {
+            "IN": 0.392,
+            "hybrid": 0.255,
+            "NA": 0.137,
+            "OP": 0.092
+          }
+        }
+      ]
+    }
+  },
+  "cultural direction": {
+    "fi": {
+      "spearman_log_words": -0.011,
+      "spearman_wds": -0.008,
+      "deciles": [
+        {
+          "decile": 1,
+          "score_range": [
+            -0.049,
+            -0.03
+          ],
+          "median_words": 670,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.771,
+            "com": 0.153,
+            "net": 0.014,
+            "eu": 0.017,
+            "org": 0.015
+          },
+          "top_registers": {
+            "IN": 0.505,
+            "NA": 0.162,
+            "hybrid": 0.15,
+            "IP": 0.119
+          }
+        },
+        {
+          "decile": 2,
+          "score_range": [
+            -0.03,
+            -0.027
+          ],
+          "median_words": 659,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.706,
+            "com": 0.195,
+            "net": 0.028,
+            "eu": 0.011,
+            "org": 0.02
+          },
+          "top_registers": {
+            "IN": 0.314,
+            "NA": 0.21,
+            "hybrid": 0.184,
+            "IP": 0.161
+          }
+        },
+        {
+          "decile": 3,
+          "score_range": [
+            -0.027,
+            -0.025
+          ],
+          "median_words": 649,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.659,
+            "com": 0.229,
+            "net": 0.037,
+            "eu": 0.008,
+            "org": 0.023
+          },
+          "top_registers": {
+            "NA": 0.22,
+            "IN": 0.212,
+            "hybrid": 0.206,
+            "IP": 0.184
+          }
+        },
+        {
+          "decile": 4,
+          "score_range": [
+            -0.025,
+            -0.023
+          ],
+          "median_words": 677,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.608,
+            "com": 0.264,
+            "net": 0.038,
+            "eu": 0.008,
+            "org": 0.027
+          },
+          "top_registers": {
+            "NA": 0.207,
+            "hybrid": 0.202,
+            "IP": 0.2,
+            "IN": 0.169
+          }
+        },
+        {
+          "decile": 5,
+          "score_range": [
+            -0.023,
+            -0.021
+          ],
+          "median_words": 693,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.58,
+            "com": 0.293,
+            "net": 0.043,
+            "eu": 0.008,
+            "org": 0.024
+          },
+          "top_registers": {
+            "NA": 0.227,
+            "hybrid": 0.211,
+            "IP": 0.196,
+            "OP": 0.188
+          }
+        },
+        {
+          "decile": 6,
+          "score_range": [
+            -0.021,
+            -0.019
+          ],
+          "median_words": 679,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.578,
+            "com": 0.302,
+            "net": 0.045,
+            "eu": 0.007,
+            "org": 0.021
+          },
+          "top_registers": {
+            "NA": 0.289,
+            "hybrid": 0.219,
+            "OP": 0.18,
+            "IP": 0.153
+          }
+        },
+        {
+          "decile": 7,
+          "score_range": [
+            -0.019,
+            -0.016
+          ],
+          "median_words": 696,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.538,
+            "com": 0.327,
+            "net": 0.06,
+            "eu": 0.009,
+            "org": 0.02
+          },
+          "top_registers": {
+            "NA": 0.391,
+            "hybrid": 0.21,
+            "OP": 0.161,
+            "IP": 0.103
+          }
+        },
+        {
+          "decile": 8,
+          "score_range": [
+            -0.016,
+            -0.014
+          ],
+          "median_words": 692,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.516,
+            "com": 0.348,
+            "net": 0.069,
+            "eu": 0.009,
+            "org": 0.016
+          },
+          "top_registers": {
+            "NA": 0.516,
+            "hybrid": 0.171,
+            "OP": 0.118,
+            "IP": 0.065
+          }
+        },
+        {
+          "decile": 9,
+          "score_range": [
+            -0.014,
+            -0.011
+          ],
+          "median_words": 676,
+          "median_wds": 9.3,
+          "tld_share": {
+            "fi": 0.475,
+            "com": 0.378,
+            "net": 0.083,
+            "eu": 0.012,
+            "org": 0.015
+          },
+          "top_registers": {
+            "NA": 0.649,
+            "hybrid": 0.129,
+            "ID": 0.067,
+            "OP": 0.061
+          }
+        },
+        {
+          "decile": 10,
+          "score_range": [
+            -0.011,
+            0.024
+          ],
+          "median_words": 658,
+          "median_wds": 9.2,
+          "tld_share": {
+            "fi": 0.404,
+            "com": 0.406,
+            "net": 0.118,
+            "eu": 0.017,
+            "org": 0.012
+          },
+          "top_registers": {
+            "NA": 0.737,
+            "ID": 0.086,
+            "hybrid": 0.084,
+            "IN": 0.029
+          }
+        }
+      ]
+    },
+    "en": {
+      "spearman_log_words": 0.119,
+      "spearman_wds": -0.011,
+      "deciles": [
+        {
+          "decile": 1,
+          "score_range": [
+            -0.073,
+            -0.053
+          ],
+          "median_words": 807,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.635,
+            "org": 0.152,
+            "uk": 0.007,
+            "edu": 0.063,
+            "au": 0.006
+          },
+          "top_registers": {
+            "IN": 0.554,
+            "hybrid": 0.282,
+            "NA": 0.12,
+            "IP": 0.017
+          }
+        },
+        {
+          "decile": 2,
+          "score_range": [
+            -0.053,
+            -0.05
+          ],
+          "median_words": 832,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.647,
+            "org": 0.13,
+            "uk": 0.016,
+            "edu": 0.032,
+            "au": 0.012
+          },
+          "top_registers": {
+            "IN": 0.479,
+            "hybrid": 0.323,
+            "NA": 0.109,
+            "OP": 0.038
+          }
+        },
+        {
+          "decile": 3,
+          "score_range": [
+            -0.05,
+            -0.048
+          ],
+          "median_words": 847,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.65,
+            "org": 0.117,
+            "uk": 0.026,
+            "edu": 0.022,
+            "au": 0.014
+          },
+          "top_registers": {
+            "IN": 0.431,
+            "hybrid": 0.338,
+            "NA": 0.106,
+            "OP": 0.057
+          }
+        },
+        {
+          "decile": 4,
+          "score_range": [
+            -0.048,
+            -0.045
+          ],
+          "median_words": 856,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.639,
+            "org": 0.112,
+            "uk": 0.032,
+            "edu": 0.021,
+            "au": 0.015
+          },
+          "top_registers": {
+            "IN": 0.384,
+            "hybrid": 0.338,
+            "NA": 0.115,
+            "OP": 0.091
+          }
+        },
+        {
+          "decile": 5,
+          "score_range": [
+            -0.045,
+            -0.044
+          ],
+          "median_words": 888,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.636,
+            "org": 0.109,
+            "uk": 0.039,
+            "edu": 0.017,
+            "au": 0.016
+          },
+          "top_registers": {
+            "hybrid": 0.342,
+            "IN": 0.342,
+            "OP": 0.125,
+            "NA": 0.121
+          }
+        },
+        {
+          "decile": 6,
+          "score_range": [
+            -0.044,
+            -0.042
+          ],
+          "median_words": 915,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.657,
+            "org": 0.105,
+            "uk": 0.041,
+            "edu": 0.014,
+            "au": 0.015
+          },
+          "top_registers": {
+            "hybrid": 0.343,
+            "IN": 0.295,
+            "OP": 0.164,
+            "NA": 0.121
+          }
+        },
+        {
+          "decile": 7,
+          "score_range": [
+            -0.042,
+            -0.04
+          ],
+          "median_words": 946,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.652,
+            "org": 0.097,
+            "uk": 0.045,
+            "edu": 0.011,
+            "au": 0.015
+          },
+          "top_registers": {
+            "hybrid": 0.326,
+            "IN": 0.259,
+            "OP": 0.184,
+            "NA": 0.148
+          }
+        },
+        {
+          "decile": 8,
+          "score_range": [
+            -0.04,
+            -0.038
+          ],
+          "median_words": 1006,
+          "median_wds": 9.3,
+          "tld_share": {
+            "com": 0.678,
+            "org": 0.084,
+            "uk": 0.049,
+            "edu": 0.009,
+            "au": 0.014
+          },
+          "top_registers": {
+            "hybrid": 0.315,
+            "IN": 0.217,
+            "OP": 0.214,
+            "NA": 0.166
+          }
+        },
+        {
+          "decile": 9,
+          "score_range": [
+            -0.038,
+            -0.035
+          ],
+          "median_words": 1037,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.686,
+            "org": 0.078,
+            "uk": 0.053,
+            "edu": 0.006,
+            "au": 0.015
+          },
+          "top_registers": {
+            "hybrid": 0.287,
+            "NA": 0.228,
+            "OP": 0.217,
+            "IN": 0.171
+          }
+        },
+        {
+          "decile": 10,
+          "score_range": [
+            -0.035,
+            0.003
+          ],
+          "median_words": 1059,
+          "median_wds": 9.2,
+          "tld_share": {
+            "com": 0.663,
+            "org": 0.063,
+            "uk": 0.077,
+            "edu": 0.003,
+            "au": 0.014
+          },
+          "top_registers": {
+            "NA": 0.343,
+            "hybrid": 0.224,
+            "OP": 0.159,
+            "IN": 0.149
+          }
+        }
+      ]
+    }
+  },
+  "europarl_p_at_1": {
+    "raw": {
+      "fi_en": 0.299,
+      "en_fi": 0.206
+    },
+    "mean": {
+      "fi_en": 0.734,
+      "en_fi": 0.5335
+    },
+    "inlp": {
+      "fi_en": 0.5285,
+      "en_fi": 0.565
+    }
+  },
+  "web_neighbours": {
+    "base_rate_fi_tld_en": 0.0005,
+    "raw": {
+      "same_register": 0.557,
+      "fi_tld_query_fi": 0.0962,
+      "fi_tld_query_other": 0.0883,
+      "overlap_with_raw": 1.0
+    },
+    "mean": {
+      "same_register": 0.642,
+      "fi_tld_query_fi": 0.0006,
+      "fi_tld_query_other": 0.0,
+      "overlap_with_raw": 0.099
+    },
+    "inlp": {
+      "same_register": 0.602,
+      "fi_tld_query_fi": 0.0004,
+      "fi_tld_query_other": 0.0004,
+      "overlap_with_raw": 0.151
+    }
+  }
+}

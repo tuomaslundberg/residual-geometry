@@ -74,3 +74,13 @@ def test_inlp_transform_before_fit_raises():
     proj = INLPProjector()
     with pytest.raises(RuntimeError, match="fit\\(\\)"):
         proj.transform(np.zeros((5, 32)))
+
+
+def test_inlp_directions_unit_and_counted(synthetic_embeddings):
+    from residual_geometry.erase import INLPEraser
+
+    *_, langs, X = synthetic_embeddings
+    eraser = INLPEraser(n_iterations=3).fit(X, langs)
+    D = eraser.directions
+    assert D.shape == (eraser.n_directions_removed, X.shape[1])
+    assert np.allclose(np.linalg.norm(D, axis=1), 1.0)
