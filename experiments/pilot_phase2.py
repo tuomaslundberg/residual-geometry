@@ -114,6 +114,7 @@ def run_pilot(
     exclude_registers: tuple[str, ...] = (),
     per_class: int | None = None,
     draw_seed: int = 0,
+    parallel_prefix: str | None = None,
 ) -> None:
     """per_class: None = all filtered docs (unbalanced, as in Sprint 2);
     0 = balanced at the smallest shared class; N > 0 = balanced at N per class
@@ -185,11 +186,29 @@ def run_pilot(
     print(f"Embedding done in {time.time() - t0:.1f}s  shape={X.shape}")
 
     # --- Erasers (factories: the language probe refits one per fold) ---
+    # global: moves the origin only (control) · mean: moves the origin and removes
+    # the FI-EN difference · leace: removes the difference only · inlp: removes
+    # whole directions · transdir: removes the translation-pair direction.
+    from residual_geometry.erase import DirectionEraser, GlobalCenteringEraser, LEACEEraser
+
     erasers: dict = {
         "identity": IdentityProjector,
+        "global": GlobalCenteringEraser,
         "mean": MeanCenteringEraser,
+        "leace": LEACEEraser,
         "inlp": INLPEraser,
     }
+    if parallel_prefix:
+        par = {}
+        for lang in ("fi", "en"):
+            with open(f"{parallel_prefix}.{lang}", encoding="utf-8") as f:
+                par[lang] = [line.strip() for line in f if line.strip()]
+        from residual_geometry.embed.cache import EmbeddingCache as _Cache
+
+        _cache = _Cache(model_name)
+        transdir = DirectionEraser.from_pairs(
+            _cache.embed(embedder, par["fi"]), _cache.embed(embedder, par["en"]))
+        erasers["transdir"] = lambda: transdir
 
     results: dict = {}
 
@@ -284,6 +303,9 @@ if __name__ == "__main__":
     parser.add_argument("--per-class", type=int, default=None,
                         help="Balanced draw: N per register per language (0 = smallest class)")
     parser.add_argument("--draw-seed", type=int, default=0)
+    parser.add_argument("--parallel", default=None,
+                        help="Prefix of aligned .fi/.en files; adds the translation-pair "
+                             "direction as an eraser ('transdir')")
     parser.add_argument("--no-cache", action="store_true",
                         help="Do not read or write the embedding cache")
     args = parser.parse_args()
@@ -298,4 +320,5 @@ if __name__ == "__main__":
         exclude_registers=tuple(r for r in args.exclude_registers.split(",") if r),
         per_class=args.per_class,
         draw_seed=args.draw_seed,
+        parallel_prefix=args.parallel,
     )

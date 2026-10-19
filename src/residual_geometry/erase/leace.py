@@ -31,7 +31,7 @@ class LEACEEraser(LanguageProjector):
 
         le = LabelEncoder()
         y = le.fit_transform(language_labels)
-        X_t = torch.from_numpy(X.astype(np.float32))
+        X_t = torch.from_numpy(X.astype(np.float64))
         y_t = torch.from_numpy(y)
         self._eraser = LeaceEraser.fit(X_t, y_t)
         return self
@@ -41,5 +41,5 @@ class LEACEEraser(LanguageProjector):
             raise RuntimeError("Call fit() before transform().")
         import torch
 
-        X_t = torch.from_numpy(X.astype(np.float32))
-        return self._eraser(X_t).numpy()
+        X_t = torch.from_numpy(X.astype(np.float64))
+        return self._eraser(X_t).numpy().astype(np.float32)

@@ -1,5 +1,6 @@
 """Language-signal erasure methods."""
 
+from .direction import DirectionEraser, GlobalCenteringEraser
 from .inlp import INLPEraser
 from .leace import LEACEEraser
 from .mean_centering import MeanCenteringEraser
@@ -11,6 +12,8 @@ INLPProjector = INLPEraser
 
 __all__ = [
     "LanguageProjector",
+    "DirectionEraser",
+    "GlobalCenteringEraser",
     "IdentityProjector",
     "INLPEraser",
     "INLPProjector",

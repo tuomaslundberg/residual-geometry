@@ -43,6 +43,7 @@ def build_projector(cfg: dict) -> LanguageProjector:
     """Instantiate an eraser from a config dict (``projection`` subtree)."""
     from .inlp import INLPEraser
     from .leace import LEACEEraser
+    from .direction import GlobalCenteringEraser
     from .mean_centering import MeanCenteringEraser
 
     registry: dict[str, type[LanguageProjector]] = {
@@ -50,6 +51,7 @@ def build_projector(cfg: dict) -> LanguageProjector:
         "inlp": INLPEraser,
         "leace": LEACEEraser,
         "mean": MeanCenteringEraser,
+        "global": GlobalCenteringEraser,
     }
     method = cfg.get("method", "none")
     if method not in registry:

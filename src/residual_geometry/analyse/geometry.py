@@ -12,7 +12,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 import numpy as np
-from scipy.spatial import procrustes as scipy_procrustes
 from scipy.spatial.distance import cdist
 from scipy.stats import spearmanr
 
@@ -135,9 +134,29 @@ def register_centroids(
 
 
 def procrustes_disparity(A: np.ndarray, B: np.ndarray) -> float:
-    """Normalised residual after optimal rotation/scaling alignment. Range [0, 1]."""
-    _, _, disparity = scipy_procrustes(A.astype(np.float64), B.astype(np.float64))
-    return float(disparity)
+    """Normalised residual after optimal rotation/scaling alignment. Range [0, 1].
+
+    Same value as ``scipy.spatial.procrustes``: centre each configuration, scale it to
+    unit Frobenius norm; the disparity is 1 - (sum of singular values of B^T A)^2.
+    Those singular values are computed from k x k QR factors instead of the d x d
+    product (k points in d dimensions), which makes the permutation null ~100x faster.
+    """
+    A = A.astype(np.float64)
+    B = B.astype(np.float64)
+    A = A - A.mean(axis=0)
+    B = B - B.mean(axis=0)
+    na, nb = np.linalg.norm(A), np.linalg.norm(B)
+    if na == 0 or nb == 0:
+        raise ValueError("Input matrices must contain >1 unique points")
+    A, B = A / na, B / nb
+    if A.shape[1] <= A.shape[0]:
+        s = np.linalg.svd(B.T @ A, compute_uv=False)
+    else:
+        # B^T A = Q_b (R_b R_a^T) Q_a^T with orthonormal Q's: same singular values.
+        _, R_a = np.linalg.qr(A.T)
+        _, R_b = np.linalg.qr(B.T)
+        s = np.linalg.svd(R_b @ R_a.T, compute_uv=False)
+    return float(1.0 - s.sum() ** 2)
 
 
 def rsa(A: np.ndarray, B: np.ndarray, metric: str = "cosine") -> tuple[float, float]:

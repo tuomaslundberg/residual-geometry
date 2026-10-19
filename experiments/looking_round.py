@@ -13,8 +13,10 @@ Three lenses, one encoder per run, all on cached embeddings:
    Finnish and English pages are about. The part of the web direction the parallel
    direction does not explain is a candidate cultural direction; read its extremes.
 
-Erasers: mean centering (moves each language's origin; changes no within-language
-distance) and INLP (removes directions, so it strips content from every document).
+Erasers: global centring (moves the origin only), mean centering (moves each
+language's origin; changes no within-language distance), LEACE (removes the mean
+difference, keeps the origin), INLP (removes directions, so it strips content from
+every document) and the translation-pair direction projected out.
 
   python experiments/looking_round.py --model sentence-transformers/LaBSE \
       --out outputs/looking_round/labse
@@ -37,6 +39,9 @@ SNIPPET = 320        # characters of text shown per document
 N_QUERIES = 2000     # Finnish web documents used as retrieval queries
 N_SHOWCASE = 14      # Finnish documents shown with their neighbours
 K = 10               # neighbours per query
+# raw · global centring (origin only) · mean centring · LEACE · INLP ·
+# translation-pair direction projected out
+ERASERS = ("raw", "global", "mean", "leace", "inlp", "transdir")
 
 
 def unit(v: np.ndarray) -> np.ndarray:
@@ -130,6 +135,8 @@ def main() -> None:
     ap.add_argument("--fi", default="/scratch/project_462001491/tlundber/data/hplt-samples/v3/fin_Latn_sample_exploded.jsonl")
     ap.add_argument("--en", default="/scratch/project_462001491/tlundber/data/hplt-samples/v3/eng_Latn_sample_exploded.jsonl")
     ap.add_argument("--par", default="/scratch/project_462001491/tlundber/data/europarl/sample-s20261018-n20000")
+    ap.add_argument("--par2", default="/scratch/project_462001491/tlundber/data/infopankki/sample-s20261019-n14419",
+                    help="Second parallel corpus (infopankki: life in Finland, both languages); '' to skip")
     ap.add_argument("--seed", type=int, default=20261018)
     args = ap.parse_args()
 
@@ -165,18 +172,31 @@ def main() -> None:
     n_fit = min(10_000, len(X["fi"]), len(X["en"]))
     fi_fit = rng.choice(len(X["fi"]), n_fit, replace=False)
     en_fit = rng.choice(len(X["en"]), n_fit, replace=False)
-    inlp = INLPEraser(n_iterations=20).fit(
+    inlp = INLPEraser().fit(
         np.vstack([X["fi"][fi_fit], X["en"][en_fit]]),
         np.array(["fi"] * n_fit + ["en"] * n_fit))
     Pm = inlp.projection_matrix
     Qb, _ = np.linalg.qr(inlp.directions.T)  # orthonormal basis of the removed subspace
     print(f"INLP removed {inlp.n_directions_removed} directions", flush=True)
 
+    from residual_geometry.erase import LEACEEraser
+
+    web_X = np.vstack([X["fi"][fi_fit], X["en"][en_fit]])
+    web_y = np.array(["fi"] * n_fit + ["en"] * n_fit)
+    leace = LEACEEraser().fit(web_X, web_y)
+    mu_all = np.vstack([X["fi"], X["en"]]).mean(0)
+
     def erase(Z: np.ndarray, lang: str, how: str) -> np.ndarray:
         if how == "raw":
             return Z
+        if how == "global":
+            return Z - mu_all
         if how == "mean":
             return Z - mu[lang]
+        if how == "leace":
+            return leace.transform(Z).astype(np.float64)
+        if how == "transdir":
+            return transdir.transform(Z).astype(np.float64)
         return Z @ Pm.T
 
     # --- Directions ---
@@ -184,10 +204,27 @@ def main() -> None:
     d_par = unit((P["fi"][fit_mask] - P["en"][fit_mask]).mean(0))
     cos_wp = float(d_web @ d_par)
     d_cult = unit(d_web - cos_wp * d_par)
+    from residual_geometry.erase import DirectionEraser as _DE
+    transdir = _DE(d_par)
     in_inlp = lambda v: float(np.linalg.norm(Qb.T @ v))  # share of a unit vector inside it
     gap_web = float(np.linalg.norm(mu["fi"] - mu["en"]))
     gap_par = float(np.linalg.norm((P["fi"][fit_mask] - P["en"][fit_mask]).mean(0)))
     mean_norm = float(np.mean(np.linalg.norm(np.vstack([X["fi"], X["en"]]), axis=1)))
+
+    # A second parallel corpus: does the pure-language direction depend on what the
+    # translations are about? (Europarl: EU parliament; infopankki: living in Finland.)
+    par2 = None
+    if args.par2:
+        P2 = {}
+        for lang in ("fi", "en"):
+            with open(f"{args.par2}.{lang}", encoding="utf-8") as f:
+                P2[lang] = cache.embed(embedder, [l.strip() for l in f if l.strip()]).astype(np.float64)
+        d_par2 = unit((P2["fi"] - P2["en"]).mean(0))
+        par2 = {"name": Path(args.par2).parent.name, "n_pairs": len(P2["fi"]),
+                "cos_with_parallel": round(float(d_par2 @ d_par), 3),
+                "cos_with_web": round(float(d_par2 @ d_web), 3),
+                "cos_with_cultural": round(float(d_par2 @ d_cult), 3),
+                "inside_inlp_subspace": round(in_inlp(d_par2), 3)}
 
     metrics: dict = {
         "model": args.model,
@@ -203,6 +240,7 @@ def main() -> None:
             "parallel_direction_inside_inlp_subspace": round(in_inlp(d_par), 3),
             "cultural_direction_inside_inlp_subspace": round(in_inlp(d_cult), 3),
         },
+        "second_parallel": par2,
     }
 
     md: list[str] = [f"# Looking round — {args.model}\n",
@@ -226,6 +264,14 @@ def main() -> None:
         f"- **How much of each lies inside what INLP removes** (1 = entirely): web {dm['web_direction_inside_inlp_subspace']:.2f} · "
         f"parallel {dm['parallel_direction_inside_inlp_subspace']:.2f} · cultural {dm['cultural_direction_inside_inlp_subspace']:.2f}.\n")
 
+    if par2:
+        md.append(
+            f"- **Second translation corpus ({par2['name']}, {par2['n_pairs']:,} pairs, about living in "
+            f"Finland):** cosine {par2['cos_with_parallel']:+.3f} with the Europarl direction, "
+            f"{par2['cos_with_web']:+.3f} with the web direction, {par2['cos_with_cultural']:+.3f} with the "
+            f"cultural direction; {par2['inside_inlp_subspace']:.2f} inside what INLP removes. If the two "
+            f"translation directions agree, the pure-language direction does not depend on subject matter.\n")
+
     # --- Lens 1 and 3: read along the directions ---
     md.append("\n## Lens 1 — what the language direction separates\n")
     lang_note = {"fi": "Finnish documents", "en": "English documents"}
@@ -239,7 +285,7 @@ def main() -> None:
     md.append("\n## Lens 2 — retrieval\n\n### Do translations still find each other? (2,000 held-out Europarl pairs)\n")
     md.append("| Eraser | FI→EN P@1 | EN→FI P@1 |\n|---|---|---|")
     metrics["europarl_p_at_1"] = {}
-    for how in ("raw", "mean", "inlp"):
+    for how in ERASERS:
         A = erase(P["fi"][held], "fi", how)
         B = erase(P["en"][held], "en", how)
         f2e = float(np.mean(neighbours(A, B, k=1)[:, 0] == np.arange(len(held))))
@@ -255,7 +301,7 @@ def main() -> None:
     q_reg = np.array([R["fi"][i]["register"] for i in queries])
     q_fi_domain = np.array([R["fi"][i]["tld"] == "fi" for i in queries])
     nb = {how: neighbours(erase(X["fi"][queries], "fi", how), erase(X["en"], "en", how))
-          for how in ("raw", "mean", "inlp")}
+          for how in ERASERS}
     base_fi_tld = float(np.mean(en_tld == "fi"))
     md.append(f"\n### Nearest English documents of {len(queries):,} Finnish documents (top {K})\n")
     md.append(f"Register agreement counts only neighbours that have a single register. "
@@ -263,7 +309,7 @@ def main() -> None:
               f"split by whether the Finnish query itself is on a `.fi` domain.\n")
     md.append("| Eraser | Same register | `.fi` neighbours (query on .fi) | `.fi` neighbours (query elsewhere) | Overlap with raw top-10 |\n|---|---|---|---|---|")
     metrics["web_neighbours"] = {"base_rate_fi_tld_en": round(base_fi_tld, 4)}
-    for how in ("raw", "mean", "inlp"):
+    for how in ERASERS:
         N = nb[how]
         reg = en_reg[N]
         single = ~np.isin(reg, ["hybrid", "none"])

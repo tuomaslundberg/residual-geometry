@@ -112,3 +112,25 @@ def test_inlp_stops_at_chance(synthetic_embeddings):
     eraser = INLPEraser().fit(X, langs)
     assert 1 <= eraser.n_directions_removed < 50
     assert eraser.dev_accuracies[-1] <= eraser.stop_threshold
+
+
+def test_global_centering_keeps_difference_and_direction_eraser_removes_it(synthetic_embeddings):
+    from residual_geometry.erase import DirectionEraser, GlobalCenteringEraser
+
+    X_fi, _, X_en, _, langs, X = synthetic_embeddings
+    gap = X_fi.mean(0) - X_en.mean(0)
+    G = GlobalCenteringEraser().fit(X, langs).transform(X)
+    assert np.allclose(G[langs == "fi"].mean(0) - G[langs == "en"].mean(0), gap, atol=1e-5)
+    assert np.allclose(G.mean(0), 0, atol=1e-5)
+    D = DirectionEraser.from_pairs(X_fi, X_en).transform(X)
+    new_gap = D[langs == "fi"].mean(0) - D[langs == "en"].mean(0)
+    assert np.linalg.norm(new_gap) < 1e-4 * np.linalg.norm(gap) + 1e-5
+
+
+def test_leace_equalises_language_means(synthetic_embeddings):
+    pytest.importorskip("concept_erasure")
+    from residual_geometry.erase import LEACEEraser
+
+    *_, langs, X = synthetic_embeddings
+    Z = LEACEEraser().fit(X, langs).transform(X)
+    assert np.linalg.norm(Z[langs == "fi"].mean(0) - Z[langs == "en"].mean(0)) < 1e-3

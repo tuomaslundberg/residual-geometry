@@ -110,3 +110,13 @@ def test_probe_axis_keeps_nulls(rng):
         assert nl["n_permutations"] == 20
         assert nl["null_p05"] <= nl["null_mean"] <= nl["null_p95"]
         assert 1 / 21 <= nl["permutation_pvalue"] <= 1.0
+
+
+def test_procrustes_matches_scipy(rng):
+    from scipy.spatial import procrustes as scipy_procrustes
+
+    for k, d in ((7, 768), (7, 5), (4, 32)):
+        A = rng.standard_normal((k, d))
+        B = A @ np.linalg.qr(rng.standard_normal((d, d)))[0] + 0.3 * rng.standard_normal((k, d))
+        expected = scipy_procrustes(A, B)[2]
+        assert procrustes_disparity(A, B) == pytest.approx(expected, abs=1e-10)
