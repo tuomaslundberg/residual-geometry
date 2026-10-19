@@ -17,17 +17,34 @@ class INLPEraser(LanguageProjector):
 
     def __init__(
         self,
-        n_iterations: int = 20,
+        n_iterations: int = 50,
         min_accuracy: float | None = None,
         classifier: str = "logistic",
+        stop_at_chance: bool = True,
+        dev_fraction: float = 0.2,
+        tolerance: float = 0.01,
+        seed: int = 0,
     ) -> None:
+        """Stopping rule (Ravfogel et al. 2020): hold out ``dev_fraction`` of the
+        documents and stop before removing a direction whose classifier scores no
+        better on them than guessing the majority class plus ``tolerance``
+        (``min_accuracy`` replaces that threshold if given). ``n_iterations`` is
+        only a cap. ``stop_at_chance=False`` restores the old behaviour: every
+        iteration removes a direction, trained and judged on all documents.
+        """
         if classifier != "logistic":
             raise NotImplementedError("Only 'logistic' is currently supported.")
         self.n_iterations = n_iterations
         self.min_accuracy = min_accuracy
+        self.stop_at_chance = stop_at_chance
+        self.dev_fraction = dev_fraction
+        self.tolerance = tolerance
+        self.seed = seed
         self._P: np.ndarray | None = None
         self._n_directions_removed: int = 0
         self._directions: list[np.ndarray] = []
+        self.dev_accuracies: list[float] = []
+        self.stop_threshold: float | None = None
 
     @property
     def projection_matrix(self) -> np.ndarray:
@@ -55,14 +72,29 @@ class INLPEraser(LanguageProjector):
         X_iter = X.astype(np.float64)
         n_dirs = 0
         self._directions = []
+        self.dev_accuracies = []
+
+        if self.stop_at_chance:
+            from sklearn.model_selection import train_test_split
+
+            train, dev = train_test_split(
+                np.arange(len(y)), test_size=self.dev_fraction, stratify=y,
+                random_state=self.seed)
+            majority = np.bincount(y[dev]).max() / len(dev)
+            self.stop_threshold = (self.min_accuracy if self.min_accuracy is not None
+                                   else majority + self.tolerance)
+        else:
+            train = dev = np.arange(len(y))
+            self.stop_threshold = self.min_accuracy
 
         for iteration in range(self.n_iterations):
             clf = LogisticRegression(max_iter=1000, C=1.0, solver="lbfgs")
-            clf.fit(X_iter, y)
+            clf.fit(X_iter[train], y[train])
 
-            if self.min_accuracy is not None:
-                acc = clf.score(X_iter, y)
-                if acc <= self.min_accuracy:
+            if self.stop_threshold is not None:
+                acc = clf.score(X_iter[dev], y[dev])
+                self.dev_accuracies.append(float(acc))
+                if acc <= self.stop_threshold:
                     break
 
             W = clf.coef_  # (n_classes, dim)

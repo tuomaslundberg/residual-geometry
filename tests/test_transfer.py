@@ -55,3 +55,15 @@ def test_summary_keys(rng):
     s = result.summary()
     assert "macro_f1" in s
     assert "per_class_f1" in s
+
+
+def test_guessing_macro_f1_by_hand():
+    from residual_geometry.eval.probing import guessing_macro_f1
+
+    train = np.array(["A"] * 3 + ["B"])          # p = (0.75, 0.25)
+    test = np.array(["A", "B"])                   # q = (0.5, 0.5)
+    g = guessing_macro_f1(train, test)
+    f1_a = 2 * 0.75 * 0.5 / 1.25
+    f1_b = 2 * 0.25 * 0.5 / 0.75
+    assert g["proportional"] == pytest.approx((f1_a + f1_b) / 2)
+    assert g["uniform"] == pytest.approx(0.5)

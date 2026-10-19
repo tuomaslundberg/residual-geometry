@@ -40,5 +40,8 @@ for rule_dir in sorted(p for p in root.iterdir() if p.is_dir()):
             print(f"| {eraser} | {metric.split('_')[0]} | {fmt([r[metric] for r in regs])} | "
                   f"{fmt([r[null_key]['null_mean'] for r in regs])} | "
                   f"{fmt([r[null_key]['null_' + pct] for r in regs])} | {sig}/{len(regs)} |")
+        guess = [r["transfer_guessing_macro_f1"]["proportional"] for r in regs
+                 if "transfer_guessing_macro_f1" in r]
+        chance = fmt(guess) if guess else f"{1 / len(d0['shared_registers']):.3f} (1/K)"
         print(f"| {eraser} | transfer F1 | {fmt([r['crosslingual_macro_f1'] for r in regs])} | "
-              f"{1 / len(d0['shared_registers']):.3f} (uniform) | | |")
+              f"{chance} | | |")

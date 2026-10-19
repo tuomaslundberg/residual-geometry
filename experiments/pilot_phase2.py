@@ -41,7 +41,10 @@ def _probe_axis(
     Metrics:
     - fi_within_acc / en_within_acc: 5-fold CV accuracy within each language
       (upper bound; shows the axis is linearly decodable before transfer)
+    - fi/en_majority_baseline: accuracy of always guessing the largest class
     - crosslingual_macro_f1: classifier trained on FI, evaluated on EN
+    - transfer_guessing_macro_f1: macro-F1 of label-blind guessing (FI class
+      proportions, or uniform); 1/K is a chance accuracy, not a chance macro-F1
     - per_class_f1: per-class breakdown for cross-lingual transfer
     - procrustes_disparity: geometric distance between FI and EN centroid spaces
     - rsa_correlation: RSA between FI and EN centroid RDMs
@@ -51,7 +54,8 @@ def _probe_axis(
       each language, centroids recomputed): mean, 5th/95th percentile and a
       one-sided permutation p-value
     """
-    from residual_geometry.eval.probing import cross_lingual_transfer, linear_probe
+    from residual_geometry.eval.probing import (
+        cross_lingual_transfer, guessing_macro_f1, linear_probe, majority_share)
     from residual_geometry.analyse.geometry import evaluate_geometry, permutation_summary
 
     fi_acc = linear_probe(X_fi, fi_labels, cv=5)
@@ -63,10 +67,14 @@ def _probe_axis(
         n_permutations=n_permutations,
     )
 
+    guess = guessing_macro_f1(fi_labels, en_labels)
     return {
         "fi_within_acc": round(fi_acc, 4),
         "en_within_acc": round(en_acc, 4),
+        "fi_majority_baseline": round(majority_share(fi_labels), 4),
+        "en_majority_baseline": round(majority_share(en_labels), 4),
         "crosslingual_macro_f1": round(transfer.macro_f1, 4),
+        "transfer_guessing_macro_f1": {k: round(v, 4) for k, v in guess.items()},
         "per_class_f1": {k: round(v, 4) for k, v in transfer.per_class_f1.items()},
         "procrustes_disparity": round(geometry.procrustes_disparity, 4),
         "rsa_correlation": round(geometry.rsa_correlation, 4),
@@ -113,7 +121,7 @@ def run_pilot(
     from residual_geometry.data.loaders import load_hplt
     from residual_geometry.embed.encoder import Embedder
     from residual_geometry.erase import IdentityProjector, INLPEraser, MeanCenteringEraser
-    from residual_geometry.eval.probing import language_probe
+    from residual_geometry.eval.probing import apply_eraser, language_probe
 
     # --- Load ---
     if per_class is not None:
@@ -176,30 +184,28 @@ def run_pilot(
         X = embedder.embed(all_texts, show_progress=True)
     print(f"Embedding done in {time.time() - t0:.1f}s  shape={X.shape}")
 
-    # --- Erasers ---
+    # --- Erasers (factories: the language probe refits one per fold) ---
     erasers: dict = {
-        "identity": IdentityProjector(),
-        "mean": MeanCenteringEraser(),
-        "inlp": INLPEraser(n_iterations=20),
+        "identity": IdentityProjector,
+        "mean": MeanCenteringEraser,
+        "inlp": INLPEraser,
     }
 
     results: dict = {}
 
-    for name, eraser in erasers.items():
+    for name, make_eraser in erasers.items():
         print(f"\n=== {name} ===")
-        eraser.fit(X, lang_labels)
-
-        if isinstance(eraser, MeanCenteringEraser):
-            X_proj = eraser.transform(X, lang_labels)
-        else:
-            X_proj = eraser.transform(X)
+        eraser = make_eraser().fit(X, lang_labels)
+        X_proj = apply_eraser(eraser, X, lang_labels)
 
         X_fi_proj = X_proj[: len(fi_texts)]
         X_en_proj = X_proj[len(fi_texts) :]
 
-        # Language sanity check (should be near chance after erasure)
-        lang_result = language_probe(X_proj, lang_labels, cv=5)
-        print(f"  Language probe selectivity: {lang_result.selectivity:.4f}")
+        # Language check: eraser refitted inside each training fold, so the
+        # held-out fold is unseen by both eraser and probe (should reach guessing).
+        lang_result = language_probe(X, lang_labels, cv=5, eraser_factory=make_eraser)
+        print(f"  Language probe: accuracy {lang_result.accuracy:.4f} "
+              f"(guessing {lang_result.chance_accuracy:.4f})")
 
         n_dirs = getattr(eraser, "n_directions_removed", None)
 
@@ -230,9 +236,11 @@ def run_pilot(
         # -----------------------------------------------------------------
 
         results[name] = {
-            "language_selectivity": round(lang_result.selectivity, 4),
             "language_accuracy": round(lang_result.accuracy, 4),
+            "language_majority_baseline": round(lang_result.chance_accuracy, 4),
+            "language_above_chance": round(lang_result.above_chance, 4),
             "n_directions_removed": n_dirs,
+            "inlp_dev_accuracies": [round(a, 4) for a in getattr(eraser, "dev_accuracies", [])] or None,
             "register": register_metrics,
         }
 

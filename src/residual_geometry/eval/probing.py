@@ -13,11 +13,21 @@ from sklearn.preprocessing import LabelEncoder
 
 @dataclass
 class ProbeResult:
-    """Result of a linear probe with selectivity (Hewitt & Liang 2019)."""
+    """Held-out accuracy of a probe against the guessing level.
+
+    ``chance_accuracy`` is the share of the largest class (always guessing it).
+    ``above_chance`` = accuracy - chance_accuracy. This is *not* Hewitt & Liang's
+    (2019) selectivity, which needs a control task over word types.
+    """
 
     accuracy: float
-    control_accuracy: float
-    selectivity: float  # accuracy - control_accuracy
+    chance_accuracy: float
+    above_chance: float
+
+    @property
+    def selectivity(self) -> float:
+        """Deprecated name for ``above_chance`` (kept for the Phase 1 scripts)."""
+        return self.above_chance
 
 
 @dataclass
@@ -47,23 +57,68 @@ def linear_probe(
     return float(scores.mean())
 
 
+def apply_eraser(eraser, X: np.ndarray, language_labels: np.ndarray) -> np.ndarray:
+    """Transform with an eraser; mean centering needs each document's language."""
+    from residual_geometry.erase import MeanCenteringEraser
+
+    if isinstance(eraser, MeanCenteringEraser):
+        return eraser.transform(X, language_labels)
+    return eraser.transform(X)
+
+
+def majority_share(y: np.ndarray) -> float:
+    """Accuracy of always guessing the largest class."""
+    _, counts = np.unique(y, return_counts=True)
+    return float(counts.max() / counts.sum())
+
+
 def language_probe(
     X: np.ndarray,
     language_labels: np.ndarray,
     cv: int = 5,
     C: float = 1.0,
     seed: int = 42,
+    eraser_factory=None,
 ) -> ProbeResult:
-    """Language-ID linear probe with selectivity.
+    """Cross-validated language-ID probe, optionally after erasure.
 
-    Selectivity = probe accuracy − control task accuracy, where the control
-    task uses shuffled labels (Hewitt & Liang 2019).
+    With ``eraser_factory`` (a no-argument callable returning an unfitted eraser),
+    the eraser is fitted on each training fold only and applied to that fold and
+    the held-out fold. Fitting it on all documents first leaks the held-out fold
+    into the erasure and pushes accuracy *below* guessing (0.365 on LaBSE).
     """
-    rng = np.random.default_rng(seed)
-    acc = linear_probe(X, language_labels, cv=cv, C=C)
-    shuffled = rng.permutation(language_labels)
-    ctrl = linear_probe(X, shuffled, cv=cv, C=C)
-    return ProbeResult(accuracy=acc, control_accuracy=ctrl, selectivity=acc - ctrl)
+    from sklearn.model_selection import StratifiedKFold
+
+    y = np.asarray(language_labels)
+    accs = []
+    for train, test in StratifiedKFold(cv, shuffle=True, random_state=seed).split(X, y):
+        X_tr, X_te = X[train], X[test]
+        if eraser_factory is not None:
+            eraser = eraser_factory().fit(X_tr, y[train])
+            X_tr = apply_eraser(eraser, X_tr, y[train])
+            X_te = apply_eraser(eraser, X_te, y[test])
+        clf = LogisticRegression(C=C, max_iter=1000, solver="lbfgs").fit(X_tr, y[train])
+        accs.append(clf.score(X_te, y[test]))
+    acc = float(np.mean(accs))
+    chance = majority_share(y)
+    return ProbeResult(accuracy=acc, chance_accuracy=chance, above_chance=acc - chance)
+
+
+def guessing_macro_f1(train_labels: np.ndarray, test_labels: np.ndarray) -> dict[str, float]:
+    """Expected macro-F1 of label-blind guessing on the test set.
+
+    A guesser predicting class k with probability p_k scores, for class k with test
+    share q_k, precision q_k and recall p_k, so F1_k = 2 p_k q_k / (p_k + q_k).
+    ``proportional``: p = training class shares; ``uniform``: p_k = 1/K.
+    """
+    classes = sorted(set(np.unique(train_labels)) | set(np.unique(test_labels)))
+    q = np.array([np.mean(test_labels == c) for c in classes])
+    out = {}
+    for name, p in (("proportional", np.array([np.mean(train_labels == c) for c in classes])),
+                    ("uniform", np.full(len(classes), 1 / len(classes)))):
+        f1 = np.where(p + q > 0, 2 * p * q / np.maximum(p + q, 1e-12), 0.0)
+        out[name] = float(f1.mean())
+    return out
 
 
 # ---------------------------------------------------------------------------

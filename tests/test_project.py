@@ -84,3 +84,31 @@ def test_inlp_directions_unit_and_counted(synthetic_embeddings):
     D = eraser.directions
     assert D.shape == (eraser.n_directions_removed, X.shape[1])
     assert np.allclose(np.linalg.norm(D, axis=1), 1.0)
+
+
+def test_language_probe_in_fold_noise_is_at_guessing():
+    """Mean centering fitted on all data pushes a noise probe below 0.5; in-fold does not."""
+    from residual_geometry.erase import MeanCenteringEraser
+    from residual_geometry.eval.probing import apply_eraser, language_probe
+
+    rng = np.random.default_rng(0)
+    X = rng.standard_normal((400, 20))
+    langs = np.array(["fi", "en"] * 200)
+    leaky = MeanCenteringEraser().fit(X, langs)
+    below = language_probe(apply_eraser(leaky, X, langs), langs, seed=1)
+    fair = language_probe(X, langs, seed=1, eraser_factory=MeanCenteringEraser)
+    assert below.accuracy < 0.45
+    assert abs(fair.accuracy - 0.5) < 0.08
+    assert fair.chance_accuracy == 0.5
+
+
+def test_inlp_stops_at_chance(synthetic_embeddings):
+    from residual_geometry.erase import INLPEraser
+
+    *_, langs, X = synthetic_embeddings
+    rng = np.random.default_rng(3)
+    noise = rng.standard_normal(X.shape)
+    assert INLPEraser().fit(noise, langs).n_directions_removed <= 1
+    eraser = INLPEraser().fit(X, langs)
+    assert 1 <= eraser.n_directions_removed < 50
+    assert eraser.dev_accuracies[-1] <= eraser.stop_threshold

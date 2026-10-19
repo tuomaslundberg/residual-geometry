@@ -46,7 +46,7 @@ EN=$WORK/data/hplt-samples/v3/eng_Latn_sample_exploded.jsonl
 
 SEED=$(( SLURM_ARRAY_TASK_ID % 20 ))
 if [ "$SLURM_ARRAY_TASK_ID" -lt 20 ]; then RULE=argmax; RULE_ARGS=(); else RULE=single; RULE_ARGS=(--single-register); fi
-OUT=outputs/phase2_balanced/$RULE/draw_$(printf %02d "$SEED").json
+OUT=${OUTROOT:-outputs/phase2_balanced}/$RULE/draw_$(printf %02d "$SEED").json
 
 python3 experiments/pilot_phase2.py \
     --fi "$FI" \
