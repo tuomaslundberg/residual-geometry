@@ -1,0 +1,20 @@
+#!/bin/bash
+#SBATCH --job-name=thesis-filter-fi
+#SBATCH --partition=small
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=16G
+#SBATCH --time=06:00:00
+#SBATCH --output=experiments/slurm/logs/%x_%j.out
+#SBATCH --error=experiments/slurm/logs/%x_%j.err
+# Finnish part of the thesis sample (scripts/thesis_sample.py): every HPLT 4 Finnish
+# document at WDS 9-10 (5,967,569 = all of levels 9 and 10), drawn by the sampler
+# (hplt-sampler-thesis, run seed 20261019).
+set -euo pipefail
+source ~/lumi-env.sh
+module use /appl/local/csc/modulefiles; module load pytorch/2.7
+OUTD=$WORK/data/thesis-sample-v4/fi; mkdir -p "$OUTD"
+python3 scripts/thesis_sample.py filter --lang fin --source fin-L9-10-all-s20261019 \
+  --out "$OUTD/eligible.jsonl" < /scratch/project_462001491/tlundber/projects/hplt-sampler-thesis/results-v4-fin_Latn-9-10/samples.jsonl 2> "$OUTD/counts.json"
+echo done
