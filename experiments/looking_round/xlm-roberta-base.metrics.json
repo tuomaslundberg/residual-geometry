@@ -12,8 +12,16 @@
     "parallel_gap_norm": 0.0657,
     "mean_doc_norm": 1.0,
     "web_direction_inside_inlp_subspace": 1.0,
-    "parallel_direction_inside_inlp_subspace": 0.917,
-    "cultural_direction_inside_inlp_subspace": 0.398
+    "parallel_direction_inside_inlp_subspace": 0.918,
+    "cultural_direction_inside_inlp_subspace": 0.397
+  },
+  "second_parallel": {
+    "name": "infopankki",
+    "n_pairs": 14419,
+    "cos_with_parallel": 0.963,
+    "cos_with_web": 0.904,
+    "cos_with_cultural": 0.05,
+    "inside_inlp_subspace": 0.904
   },
   "web language direction": {
     "fi": {
@@ -928,13 +936,25 @@
       "fi_en": 0.299,
       "en_fi": 0.206
     },
+    "global": {
+      "fi_en": 0.5585,
+      "en_fi": 0.0875
+    },
     "mean": {
       "fi_en": 0.734,
       "en_fi": 0.5335
     },
+    "leace": {
+      "fi_en": 0.528,
+      "en_fi": 0.5625
+    },
     "inlp": {
-      "fi_en": 0.5285,
-      "en_fi": 0.565
+      "fi_en": 0.529,
+      "en_fi": 0.567
+    },
+    "transdir": {
+      "fi_en": 0.7155,
+      "en_fi": 0.728
     }
   },
   "web_neighbours": {
@@ -945,17 +965,35 @@
       "fi_tld_query_other": 0.0883,
       "overlap_with_raw": 1.0
     },
+    "global": {
+      "same_register": 0.431,
+      "fi_tld_query_fi": 0.005,
+      "fi_tld_query_other": 0.0025,
+      "overlap_with_raw": 0.025
+    },
     "mean": {
       "same_register": 0.642,
       "fi_tld_query_fi": 0.0006,
       "fi_tld_query_other": 0.0,
       "overlap_with_raw": 0.099
     },
-    "inlp": {
-      "same_register": 0.602,
+    "leace": {
+      "same_register": 0.603,
       "fi_tld_query_fi": 0.0004,
       "fi_tld_query_other": 0.0004,
-      "overlap_with_raw": 0.151
+      "overlap_with_raw": 0.148
+    },
+    "inlp": {
+      "same_register": 0.601,
+      "fi_tld_query_fi": 0.0004,
+      "fi_tld_query_other": 0.0004,
+      "overlap_with_raw": 0.152
+    },
+    "transdir": {
+      "same_register": 0.621,
+      "fi_tld_query_fi": 0.0023,
+      "fi_tld_query_other": 0.001,
+      "overlap_with_raw": 0.109
     }
   }
 }

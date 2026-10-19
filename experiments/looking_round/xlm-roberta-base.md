@@ -10,6 +10,8 @@
 - **Agreement between the two:** cosine +0.918. The share of the web direction the parallel one does not explain: 0.40 (sine of the angle). That remainder is the candidate cultural direction.
 - **How much of each lies inside what INLP removes** (1 = entirely): web 1.00 · parallel 0.92 · cultural 0.40.
 
+- **Second translation corpus (infopankki, 14,419 pairs, about living in Finland):** cosine +0.963 with the Europarl direction, +0.904 with the web direction, +0.050 with the cultural direction; 0.90 inside what INLP removes. If the two translation directions agree, the pure-language direction does not depend on subject matter.
+
 
 ## Lens 1 — what the language direction separates
 
@@ -320,8 +322,11 @@ Correlation of the score with length (log words): ρ = +0.12; with quality (WDS)
 | Eraser | FI→EN P@1 | EN→FI P@1 |
 |---|---|---|
 | raw | 0.299 | 0.206 |
+| global | 0.558 | 0.087 |
 | mean | 0.734 | 0.533 |
-| inlp | 0.528 | 0.565 |
+| leace | 0.528 | 0.562 |
+| inlp | 0.529 | 0.567 |
+| transdir | 0.716 | 0.728 |
 
 ### Nearest English documents of 2,000 Finnish documents (top 10)
 
@@ -330,8 +335,11 @@ Register agreement counts only neighbours that have a single register. `.fi` sha
 | Eraser | Same register | `.fi` neighbours (query on .fi) | `.fi` neighbours (query elsewhere) | Overlap with raw top-10 |
 |---|---|---|---|---|
 | raw | 55.7% | 9.62% | 8.83% | 100% |
+| global | 43.1% | 0.50% | 0.25% | 2% |
 | mean | 64.2% | 0.06% | 0.00% | 10% |
-| inlp | 60.2% | 0.04% | 0.04% | 15% |
+| leace | 60.3% | 0.04% | 0.04% | 15% |
+| inlp | 60.1% | 0.04% | 0.04% | 15% |
+| transdir | 62.1% | 0.23% | 0.10% | 11% |
 
 ### 14 Finnish documents and their nearest English documents
 
@@ -421,10 +429,10 @@ Top 3 neighbours before erasure (raw) and after INLP. Queries drawn across regis
 
 - **NA** · WDS 9.7 · 1072 words · `biospectrumasia.com`
   > 02 December 2023 | News Headquartered in California, USA, Harae Dx, a medical diagnostics company is all set to introduce the next generation Artificial Intelligence (AI) enabled automated multi-cancer early detection system in India, China and the US in three years-time period. Harae Dx has already secured seed …
-- **hybrid** · WDS 9.5 · 1043 words · `therandomsingaporean.com`
-  > Ad-Evo is an innovative approach to architectural design evolution – a way to redefine the product design process. By leveraging generative structural studies, communication technologies and advanced algorithms, Ad-Evo revolutionizes designers’ ability to rapidly conceptualize complex designs that are optimized for …
 - **NA** · WDS 9.2 · 756 words · `twresearchgroup.com`
   > TW’s Take: another positive step for Movano as they look poised to become the leaders in non-invasive glucose monitoring. PLEASANTON, Calif., May 12, 2022 /PRNewswire/ — Movano Inc. (Nasdaq: MOVE), a purpose-driven healthcare solutions company at the intersection of medtech and consumer devices, announces it has …
+- **hybrid** · WDS 9.5 · 1043 words · `therandomsingaporean.com`
+  > Ad-Evo is an innovative approach to architectural design evolution – a way to redefine the product design process. By leveraging generative structural studies, communication technologies and advanced algorithms, Ad-Evo revolutionizes designers’ ability to rapidly conceptualize complex designs that are optimized for …
 
 #### Query: LY · `huskyeye-kati.blogspot.com`
 > Tekstit Tilassani, tilallani yöllinen runoilija kirjoittaa hankaa päätään pyyhekumilla ja tilaa kupin teetä unohtaa ettei ole kahvilassa leivos mukaan ja tilkka maitoa vieressä uskollinen koira-kissa-lintu murisee-hurisee-tsirpittää kuin luonto olisi läsnä astunut vuosisadat sisään ikkunasta vuotaa laineita niiden mukana kaloja, tulva on pahana tänä vuonna niin kuin äiti sivaltaessaan runoilijaa …
@@ -551,10 +559,10 @@ Top 3 neighbours before erasure (raw) and after INLP. Queries drawn across regis
 
 *inlp:*
 
-- **NA** · WDS 9.3 · 456 words · `www.w4ava.org`
-  > It had been my intention to send out a New Year’s message to our members, but the flow of the river was faster than my ability to paddle. I have fallen behind. However, by chance, I am on time for the Chinese (lunar) New Year. So, eat long noodles for good luck as we begin the year of the snake. Recently, I stopped …
 - **ID** · WDS 9.2 · 398 words · `thesteamboatingforum.net`
   > Lopez Mike wrote: It does seem odd to be doing this at night. I understand the scheduling problems but the whole point of steam excursions is see the thing. This feels like submarine races. Not a big spectator event. The run wasn't quite a secret Mike, but members of the A1 society were asked to keep it quiet, and …
+- **NA** · WDS 9.3 · 456 words · `www.w4ava.org`
+  > It had been my intention to send out a New Year’s message to our members, but the flow of the river was faster than my ability to paddle. I have fallen behind. However, by chance, I am on time for the Chinese (lunar) New Year. So, eat long noodles for good luck as we begin the year of the snake. Recently, I stopped …
 - **ID** · WDS 9.3 · 2496 words · `www.freerepublic.com`
   > Posted on 10/30/2005 5:51:37 PM PST by aculeus Posting "condolences for the family, to me just means a sign of respect and that someone cares. Uh, I had Electricity 101 but I can't read your mind. Please explain. ping I read somewhere, decades ago that the smallest voltage for which an accidental electrocution has …
 

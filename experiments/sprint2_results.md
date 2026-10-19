@@ -204,7 +204,7 @@ the 20 draws.*
 | argmax | INLP − Identity | −0.100 | 2/20 | −0.004 | 6/20 |
 | single | INLP − Identity | −0.056 | 4/20 | +0.025 | 18/20 |
 
-Language probe selectivity: identity +0.50, mean −0.16, INLP −0.15 (INLP removes 7–9 directions).
+Language probe selectivity: identity +0.50, mean −0.16, INLP −0.15 (INLP removes 7–9 directions). *Superseded 2026-10-19: these came from fitting the eraser before cross-validation, and INLP had no stopping rule; see the next section.*
 
 **Reading.**
 
@@ -218,7 +218,8 @@ Language probe selectivity: identity +0.50, mean −0.16, INLP −0.15 (INLP rem
   becomes "language removal sharpens an alignment that is already there", not "removal
   reveals a hidden alignment" (0.355 → 0.851).
 - **INLP does not help RSA** (lower than identity in 16–18 of 20 draws) and is mixed on
-  transfer. Mean centering beats INLP on RSA in every draw. The Sprint 2 conclusion "mean
+  transfer. *(Superseded 2026-10-19: with a stopping rule INLP removes fewer
+  directions and its median RSA effect is ≈ 0; see "Corrected pipeline" below.)* Mean centering beats INLP on RSA in every draw. The Sprint 2 conclusion "mean
   centering > INLP" holds.
 - **Single-register documents give cleaner centroids:** higher RSA after mean centering
   (0.82 vs 0.79) and higher transfer F1 throughout. Supports using prototypical documents in
@@ -238,6 +239,77 @@ The imbalanced Procrustes p-values in the previous section are subject to the sa
 **Caveats.** Still 7 centroids / 21 distances per draw; one corpus, one encoder (LaBSE).
 The draws share documents (385 of 385 SP every time in FI under *single*), so their spread
 understates true sampling variability for the rarest class.
+
+
+---
+
+## Corrected pipeline and all removal conditions — 2026-10-19
+
+*Same 20 balanced draws × 2 register rules as above (seeds unchanged), re-run after the methods
+walkthrough fixes (commit `d93b0f8`) with three new conditions (`9bd6936`). Outputs:
+`outputs/phase2_balanced_v2/` (job 22970061). Median [min, max] over 20 draws; paired
+differences use the same documents.*
+
+**What changed in the pipeline**
+
+- **Language probe:** the eraser is now fitted inside each training fold, and accuracy is compared
+  with the majority-class share (0.50). The old "selectivity −0.15" came from fitting on all data
+  first and is retired.
+- **INLP** stops when a held-out language classifier is no better than guessing (+0.01): it now
+  removes 4–8 directions (7–9 before). Treat earlier INLP numbers as superseded.
+- **Baselines:** in these balanced runs, majority class = 1/7 and guessing macro-F1 = 1/7, so the
+  0.143 above was the right number here. It was wrong only for the unbalanced Sprint 2 tables.
+
+**The conditions**
+
+| Condition | What it does |
+|---|---|
+| identity | nothing |
+| global | moves the origin to the pooled mean; the FI–EN difference stays |
+| mean | moves each language's mean to the origin: removes the difference *and* moves the origin |
+| leace | removes the difference (equal language means) with the smallest change; origin stays |
+| inlp | removes whole directions until a held-out probe can no longer tell the languages apart |
+| transdir | projects out the FI–EN direction of Europarl translation pairs (pure language) |
+
+**Language probe (held-out accuracy; guessing 0.50)**
+
+| | identity | global | mean | leace | inlp | transdir |
+|---|---|---|---|---|---|---|
+| both rules | 0.996 | 0.996 | 0.500 | 0.500 | 0.545 | 0.996 |
+
+Removing the translation-pair direction leaves the language perfectly readable in LaBSE: what
+separates Finnish from English web text there is not the direction translation pairs define.
+INLP with a stopping rule leaves a trace (0.545).
+
+**RSA and transfer, paired against identity (single-register rule; argmax in brackets)**
+
+| Condition | RSA | RSA − identity | Draws up | Transfer F1 | F1 − identity | Draws up |
+|---|---|---|---|---|---|---|
+| identity | 0.719 (0.716) | | | 0.632 (0.595) | | |
+| global | 0.727 (0.722) | +0.009 (+0.005) | 10/20 (10) | 0.631 (0.595) | 0.000 (0.000) | 4/20 (9) |
+| mean | **0.819 (0.785)** | **+0.117 (+0.068)** | 20/20 (19) | **0.670 (0.630)** | **+0.037 (+0.032)** | 20/20 (20) |
+| leace | 0.738 (0.717) | +0.021 (+0.001) | 15/20 (10) | **0.668 (0.629)** | **+0.035 (+0.031)** | 20/20 (20) |
+| inlp | 0.688 (0.706) | −0.013 (+0.006) | 9/20 (10) | 0.664 (0.614) | +0.034 (+0.019) | 19/20 (16) |
+| transdir | 0.725 (0.715) | +0.004 (+0.000) | 12/20 (8) | 0.633 (0.597) | +0.001 (+0.004) | 13/20 (15) |
+
+All RSA values are above chance in 20/20 draws (chance ≈ 0, 95th percentile ≈ 0.42).
+
+**Reading.**
+
+- **The transfer gain comes from removing the difference.** LEACE (difference only) matches mean
+  centring (+0.035 vs +0.037); moving the origin alone (global) adds nothing.
+- **The RSA gain needs both at once.** Neither removing the difference (LEACE, +0.02) nor moving
+  the origin (global, +0.01) raises RSA on its own; mean centring, which does both, gives
+  +0.07–0.12. RSA uses cosine, which is measured from the origin: once the difference is gone,
+  where the origin sits decides the angles between centroids. So the mean-centring RSA gain is
+  partly a property of the metric meeting this particular eraser, not evidence that more
+  register information became available. Transfer, which is not angle-based, rises equally
+  under LEACE.
+- **INLP neither helps nor hurts RSA on median** once it stops at chance; the spread across
+  draws is large ([−0.16, +0.06]). The earlier "INLP lowers RSA" came from over-removal.
+- **Removing the pure-language direction changes nothing measurable in LaBSE** (RSA, transfer and
+  the language probe all equal identity), consistent with the looking round: LaBSE's FI–EN
+  difference is mostly not translation-level language.
 
 ---
 

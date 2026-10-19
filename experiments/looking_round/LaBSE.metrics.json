@@ -5,15 +5,23 @@
     "en": 94403
   },
   "n_parallel_pairs": 20000,
-  "inlp_directions_removed": 13,
+  "inlp_directions_removed": 11,
   "directions": {
     "cos_web_parallel": 0.373,
     "web_gap_norm": 0.306,
     "parallel_gap_norm": 0.1971,
     "mean_doc_norm": 1.0,
     "web_direction_inside_inlp_subspace": 0.999,
-    "parallel_direction_inside_inlp_subspace": 0.431,
-    "cultural_direction_inside_inlp_subspace": 0.931
+    "parallel_direction_inside_inlp_subspace": 0.415,
+    "cultural_direction_inside_inlp_subspace": 0.932
+  },
+  "second_parallel": {
+    "name": "infopankki",
+    "n_pairs": 14419,
+    "cos_with_parallel": 0.877,
+    "cos_with_web": 0.228,
+    "cos_with_cultural": -0.107,
+    "inside_inlp_subspace": 0.315
   },
   "web language direction": {
     "fi": {
@@ -928,11 +936,23 @@
       "fi_en": 0.9935,
       "en_fi": 0.9955
     },
+    "global": {
+      "fi_en": 0.994,
+      "en_fi": 0.996
+    },
     "mean": {
       "fi_en": 0.995,
       "en_fi": 0.996
     },
+    "leace": {
+      "fi_en": 0.994,
+      "en_fi": 0.9955
+    },
     "inlp": {
+      "fi_en": 0.9945,
+      "en_fi": 0.9955
+    },
+    "transdir": {
       "fi_en": 0.9945,
       "en_fi": 0.9955
     }
@@ -945,17 +965,35 @@
       "fi_tld_query_other": 0.0009,
       "overlap_with_raw": 1.0
     },
+    "global": {
+      "same_register": 0.622,
+      "fi_tld_query_fi": 0.0023,
+      "fi_tld_query_other": 0.0009,
+      "overlap_with_raw": 0.734
+    },
     "mean": {
       "same_register": 0.603,
       "fi_tld_query_fi": 0.0015,
       "fi_tld_query_other": 0.0006,
       "overlap_with_raw": 0.664
     },
+    "leace": {
+      "same_register": 0.596,
+      "fi_tld_query_fi": 0.0012,
+      "fi_tld_query_other": 0.0004,
+      "overlap_with_raw": 0.719
+    },
     "inlp": {
       "same_register": 0.52,
-      "fi_tld_query_fi": 0.0009,
+      "fi_tld_query_fi": 0.001,
       "fi_tld_query_other": 0.0004,
-      "overlap_with_raw": 0.618
+      "overlap_with_raw": 0.619
+    },
+    "transdir": {
+      "same_register": 0.618,
+      "fi_tld_query_fi": 0.0023,
+      "fi_tld_query_other": 0.0009,
+      "overlap_with_raw": 0.833
     }
   }
 }

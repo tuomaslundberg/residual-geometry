@@ -2,7 +2,8 @@
 
 *LaBSE and XLM-R base on the same data: 83,468 Finnish + 94,403 English HPLT v3 web documents
 (machine-translated dropped), and 20,000 Europarl translation pairs (2,000 held out for
-retrieval). Erasers fitted on web text. Full reports with every document listed:
+retrieval). Erasers fitted on web text. Updated 2026-10-19 (corrected INLP, new removal conditions, infopankki): see the last section.
+Full reports with every document listed:
 [`looking_round/LaBSE.md`](looking_round/LaBSE.md) ·
 [`looking_round/xlm-roberta-base.md`](looking_round/xlm-roberta-base.md). Code:
 `experiments/looking_round.py`, run with `experiments/slurm/sl-run-looking` (≈3 min per encoder
@@ -27,7 +28,7 @@ from the embedding cache). This is a first look, written to be read, not a resul
 | | LaBSE | XLM-R base |
 |---|---|---|
 | Web direction vs pure-language direction (cosine; 1 = same) | **0.37** | **0.92** |
-| Directions INLP removes | 13 | 1 |
+| Directions INLP removes (stopping at chance; 13 before 2026-10-19) | 11 | 1 |
 | Translation retrieval FI→EN before → after removal (mean centering / INLP) | 0.99 → 0.99 / 0.99 | **0.30 → 0.73 / 0.53** |
 | English neighbours of Finnish pages that are English pages on `.fi` sites (base rate 0.05 %) | 0.2 % → 0.1 % | **9.6 % → 0.04 %** |
 | English neighbours with the same register as the Finnish page, before → after INLP | 62 % → **52 %** | 56 % → **60 %** |
@@ -58,7 +59,7 @@ from the embedding cache). This is a first look, written to be read, not a resul
 - **Translation retrieval is 0.99 before any removal**, as LaBSE's training intends. There is
   little pure language left to remove.
 - **Yet Finnish and English web pages still differ, and mostly not by language:** the web
-  direction is only 0.37 aligned with the pure-language direction. INLP needs 13 directions
+  direction is only 0.37 aligned with the pure-language direction. INLP needs 11 directions
   to make the languages inseparable, and the cultural direction lies almost entirely (0.93)
   inside what it removes.
 - **Reading along it, this difference is about place and public sphere.** The most "Finnish"
@@ -75,7 +76,9 @@ from the embedding cache). This is a first look, written to be read, not a resul
   narrative (NA) against under 17 % at the English end; English documents tilt the same way,
   more weakly (32 % against 19 %). So removing "language" from LaBSE also removes part of
   what distinguishes narrative from informational and persuasive text, which is why INLP
-  lowered register agreement (62 % → 52 %) and the register RSA in the balanced runs.
+  lowered register agreement among web neighbours (62 % → 52 %). *(The balanced-run RSA drop
+  attributed to this here came mostly from INLP over-removing; with a stopping rule its median
+  RSA effect is ≈ 0. See `sprint2_results.md` § Corrected pipeline.)*
 - **Retrieval shows what remains:** LaBSE matches topic before and after removal (skin care to
   skin care, LED to LED, a Finnish court-procedure text to US state law). Finnish-specific
   content has no Finnish-specific English counterpart to find, so it lands on its closest
@@ -112,3 +115,27 @@ from the embedding cache). This is a first look, written to be read, not a resul
   a stable estimate.
 - **One first look, one corpus, one seed.** Nothing here has a chance level yet; that comes
   after deciding what is worth testing.
+
+## Update 2026-10-19 — corrected INLP, more removal conditions, a second translation corpus
+
+*Re-run with the pipeline fixes and three new conditions (global centring, LEACE, projecting out
+the Europarl translation-pair direction), plus infopankki (14,419 unique pairs, all about living
+in Finland) as a second translation corpus. The reports in `looking_round/` are the re-run.*
+
+- **The pure-language direction does not depend on what the translations are about.** The
+  infopankki direction agrees with the Europarl one: cosine 0.88 (LaBSE), 0.96 (XLM-R). In
+  LaBSE it is even further from the web direction (0.23) and slightly opposite to the cultural
+  direction (−0.11): translations that are both about Finland carry none of the cultural axis,
+  as they should.
+- **XLM-R: removing just the translation-pair direction gives the best translation retrieval**
+  (FI→EN 0.72, EN→FI 0.73), as good as mean centring FI→EN (0.73) and far more even in both
+  directions (mean centring EN→FI 0.53; LEACE and INLP 0.53–0.57). Moving the origin alone
+  (global centring) is lopsided, 0.56 one way and 0.09 the other.
+- **LaBSE: removing the translation-pair direction changes little** (83 % of web neighbours
+  unchanged, register agreement 62 %), while INLP's 11 data-driven directions change 38 % and
+  drop register agreement to 52 %. In the balanced runs, removing the translation direction
+  leaves the language perfectly readable (probe 0.996). The cultural direction stays 0.93
+  inside what INLP removes.
+- **The main finding stands:** in XLM-R the web language difference is the translation-level
+  difference, and removing it uncovers meaning; in LaBSE it is something else, which data-fitted
+  erasers remove and the translation direction does not touch.
