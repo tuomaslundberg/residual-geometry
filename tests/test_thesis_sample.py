@@ -24,23 +24,34 @@ def test_label_scheme():
     assert ts.label({"NA": 0.44}, ts.THRESHOLD["fin"])[0] is None         # Finnish threshold 0.45
 
 
-def test_draw_is_uniform_seeded_and_excludes(tmp_path):
+def test_draw_caps_sites_drops_mt_hybrids_and_is_seeded(tmp_path):
     import json
+    from collections import Counter
     from types import SimpleNamespace
 
-    def write(name, labels):
+    def write(name, rows):
         p = tmp_path / name
-        p.write_text("".join(json.dumps({"id": f"{name}{i}", "label": l}) + "\n"
-                             for i, l in enumerate(labels)))
+        p.write_text("".join(json.dumps(r) + "\n" for r in rows))
         return p
 
-    fi = write("fi", ["NA"] * 50 + ["SP"] * 9 + ["LY"] * 30)
-    en = write("en", ["NA"] * 20 + ["SP"] * 40)
+    fi_rows = ([{"id": f"a{i}", "label": "NA", "mt": False, "url": "http://big.fi/x"} for i in range(40)]
+               + [{"id": f"b{i}", "label": "NA", "mt": False, "url": f"http://s{i}.fi/"} for i in range(6)]
+               + [{"id": f"c{i}", "label": "NA", "mt": True, "url": f"http://m{i}.fi/"} for i in range(5)]
+               + [{"id": f"d{i}", "label": "MT", "mt": True, "url": f"http://t{i}.fi/"} for i in range(3)]
+               + [{"id": f"e{i}", "label": "LY", "mt": False, "url": "http://l.fi/"} for i in range(5)])
+    fi = write("fi", fi_rows)
+    en = write("en", [{"id": f"x{i}", "label": "NA", "mt": False, "url": f"http://e{i}.com/"} for i in range(20)])
     out = tmp_path / "out"
-    args = SimpleNamespace(fi=[fi], en=[en], per_class=10, seed=1, exclude=["LY"], out=str(out))
+    args = SimpleNamespace(fi=[fi], en=[en], per_class=10, seed=1, exclude=["LY"], out=str(out),
+                           host_cap=3, no_mt_hybrids=True)
     ts.cmd_draw(args)
     rows = [json.loads(l) for l in open(out / "fi.jsonl")]
-    assert sorted(r["label"] for r in rows) == ["NA"] * 10 + ["SP"] * 9
+    na = [r for r in rows if r["label"] == "NA"]
+    assert len(na) == 9                                     # 3 from big.fi + 6 singletons
+    assert Counter(r["url"] for r in na)["http://big.fi/x"] == 3
+    assert not any(r["mt"] for r in na)                     # MT + NA dropped
+    assert sum(r["label"] == "MT" for r in rows) == 3       # MT-only kept
+    assert not any(r["label"] == "LY" for r in rows)
     first = (out / "fi.jsonl").read_text()
     ts.cmd_draw(args)
     assert (out / "fi.jsonl").read_text() == first

@@ -16,8 +16,9 @@ Labelling, per document, at the language's model-card threshold (fin 0.45, eng 0
            documents and prints per-label counts as JSON on stderr at the end.
   draw:    python scripts/thesis_sample.py draw --fi FI.jsonl --en EN.jsonl --per-class N \
                --seed S --exclude LY --out DIR
-           Seeded reservoir draw of N documents per label per language (all of a label if
-           fewer), streaming.
+           [--host-cap 500 --no-mt-hybrids]
+           Seeded draw of N documents per label per language (all of a label if fewer),
+           optionally capped per site and without MT + register documents.
 """
 
 from __future__ import annotations
@@ -91,46 +92,75 @@ def cmd_filter(args) -> None:
 
 
 def cmd_draw(args) -> None:
-    """One streaming pass per language: a seeded reservoir of N lines per label.
+    """Seeded draw of N documents per label per language, two passes per file.
 
-    Memory holds only the reservoirs (N x labels lines), so the 62 GB Finnish file is
-    fine. Labels in --exclude are skipped; a label with fewer than N documents is kept
-    whole and reported.
+    Pass 1 indexes (label, site, MT flag, byte offset) for every line; pass 2 reads
+    back only the chosen lines, so memory stays small for the 62 GB Finnish pool.
+    Within a label, documents are taken in a seeded random order, skipping any whose
+    site (URL host) already has ``--host-cap`` documents in that label: a uniform draw
+    subject to the cap. ``--no-mt-hybrids`` drops documents that carry MT together
+    with a register (MT + HI counts as a hybrid); MT-only documents stay a class.
+    A label with fewer eligible documents than N is kept whole and reported.
     """
     import random
+    from urllib.parse import urlsplit
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
     exclude = set(args.exclude)
     summary = {}
     for lang, paths in (("fi", args.fi), ("en", args.en)):
-        rng = random.Random(f"{args.seed}:{lang}")
-        res: dict[str, list[str]] = {}
-        seen: Counter = Counter()
-        for p in paths:
-            with open(p, encoding="utf-8") as f:
-                for line in f:
-                    lab = json.loads(line)["label"]
+        index: dict[str, list[tuple[int, int, str]]] = {}
+        skipped = Counter()
+        for fi_, p in enumerate(paths):
+            with open(p, "rb") as f:
+                pos = 0
+                for raw in f:
+                    d = json.loads(raw)
+                    lab = d["label"]
                     if lab in exclude:
-                        continue
-                    k = seen[lab]
-                    seen[lab] += 1
-                    bucket = res.setdefault(lab, [])
-                    if k < args.per_class:
-                        bucket.append(line)
+                        skipped["excluded_label"] += 1
+                    elif args.no_mt_hybrids and d["mt"] and lab != "MT":
+                        skipped["mt_hybrid"] += 1
                     else:
-                        j = rng.randint(0, k)
-                        if j < args.per_class:
-                            bucket[j] = line
-        chosen = [line for lab in sorted(res) for line in res[lab]]
+                        host = (urlsplit(d.get("url") or "").hostname or "").lower()
+                        index.setdefault(lab, []).append((fi_, pos, host))
+                    pos += len(raw)
+        rng = random.Random(f"{args.seed}:{lang}")
+        chosen: list[tuple[int, int]] = []
+        summary[lang] = {"skipped": dict(skipped), "cells": {}}
+        for lab in sorted(index):
+            docs = index[lab]
+            order = list(range(len(docs)))
+            rng.shuffle(order)
+            per_host: Counter = Counter()
+            take = []
+            for k in order:
+                fi_, pos, host = docs[k]
+                if args.host_cap and per_host[host] >= args.host_cap:
+                    continue
+                per_host[host] += 1
+                take.append((fi_, pos))
+                if len(take) == args.per_class:
+                    break
+            chosen += take
+            top = per_host.most_common(1)[0] if per_host else ("", 0)
+            summary[lang]["cells"][lab] = {
+                "available": len(docs), "drawn": len(take), "sites": len(per_host),
+                "largest_site": top[0], "largest_site_docs": top[1]}
         rng.shuffle(chosen)
-        with open(out / f"{lang}.jsonl", "w", encoding="utf-8") as f:
-            f.writelines(chosen)
-        summary[lang] = {lab: {"available": seen[lab], "drawn": len(res[lab])} for lab in sorted(res)}
+        handles = [open(p, "rb") for p in paths]
+        with open(out / f"{lang}.jsonl", "wb") as f:
+            for fi_, pos in chosen:
+                handles[fi_].seek(pos)
+                f.write(handles[fi_].readline())
+        for h in handles:
+            h.close()
     (out / "summary.json").write_text(json.dumps(
         {"per_class": args.per_class, "seed": args.seed, "excluded": sorted(exclude),
+         "host_cap": args.host_cap, "no_mt_hybrids": args.no_mt_hybrids,
          "fi": [str(p) for p in args.fi], "en": [str(p) for p in args.en],
-         "cells": summary}, indent=2))
+         "result": summary}, indent=2))
     print(json.dumps(summary, indent=2))
 
 
@@ -148,6 +178,10 @@ if __name__ == "__main__":
     d.add_argument("--per-class", type=int, required=True)
     d.add_argument("--seed", type=int, default=20261019)
     d.add_argument("--exclude", nargs="*", default=[], help="labels to leave out, e.g. LY")
+    d.add_argument("--host-cap", type=int, default=0,
+                   help="at most this many documents from one site (URL host) per label; 0 = no cap")
+    d.add_argument("--no-mt-hybrids", action="store_true",
+                   help="drop documents labelled MT together with a register")
     d.add_argument("--out", required=True)
     a = ap.parse_args()
     {"filter": cmd_filter, "draw": cmd_draw}[a.cmd](a)
