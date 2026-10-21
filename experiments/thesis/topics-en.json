@@ -1,0 +1,460 @@
+{
+  "lang": "en",
+  "k_curve": [
+    {
+      "k": 8,
+      "npmi_mean": 0.1595
+    },
+    {
+      "k": 12,
+      "npmi_mean": 0.1762
+    },
+    {
+      "k": 16,
+      "npmi_mean": 0.1884
+    },
+    {
+      "k": 20,
+      "npmi_mean": 0.1816
+    },
+    {
+      "k": 25,
+      "npmi_mean": 0.1976
+    },
+    {
+      "k": 30,
+      "npmi_mean": 0.1822
+    }
+  ],
+  "k": 25,
+  "n_docs": 144000,
+  "vocab_size": 30000,
+  "max_words": 500,
+  "topics": [
+    {
+      "topic": 0,
+      "top_words": [
+        "think",
+        "really",
+        "feel",
+        "tell",
+        "try",
+        "something",
+        "love",
+        "lot",
+        "life",
+        "never"
+      ],
+      "npmi": 0.0679,
+      "n_docs_argmax": 6984
+    },
+    {
+      "topic": 1,
+      "top_words": [
+        "casino",
+        "slot",
+        "online",
+        "bonus",
+        "deposit",
+        "gamble",
+        "game",
+        "machine",
+        "free",
+        "spin"
+      ],
+      "npmi": 0.2965,
+      "n_docs_argmax": 4283
+    },
+    {
+      "topic": 2,
+      "top_words": [
+        "bedroom",
+        "room",
+        "home",
+        "floor",
+        "kitchen",
+        "bathroom",
+        "living",
+        "property",
+        "space",
+        "bath"
+      ],
+      "npmi": 0.2461,
+      "n_docs_argmax": 5785
+    },
+    {
+      "topic": 3,
+      "top_words": [
+        "business",
+        "company",
+        "customer",
+        "service",
+        "market",
+        "product",
+        "industry",
+        "technology",
+        "team",
+        "client"
+      ],
+      "npmi": 0.1095,
+      "n_docs_argmax": 11602
+    },
+    {
+      "topic": 4,
+      "top_words": [
+        "essay",
+        "writing",
+        "paper",
+        "write",
+        "writer",
+        "thesis",
+        "service",
+        "assignment",
+        "research",
+        "dissertation"
+      ],
+      "npmi": 0.2713,
+      "n_docs_argmax": 2718
+    },
+    {
+      "topic": 5,
+      "top_words": [
+        "window",
+        "download",
+        "app",
+        "file",
+        "device",
+        "computer",
+        "install",
+        "data",
+        "user",
+        "software"
+      ],
+      "npmi": 0.1879,
+      "n_docs_argmax": 7824
+    },
+    {
+      "topic": 6,
+      "top_words": [
+        "recipe",
+        "cook",
+        "food",
+        "chicken",
+        "dish",
+        "ingredient",
+        "flavor",
+        "meal",
+        "add",
+        "sauce"
+      ],
+      "npmi": 0.2406,
+      "n_docs_argmax": 5090
+    },
+    {
+      "topic": 7,
+      "top_words": [
+        "date",
+        "woman",
+        "site",
+        "online",
+        "relationship",
+        "single",
+        "man",
+        "girl",
+        "meet",
+        "profile"
+      ],
+      "npmi": 0.1306,
+      "n_docs_argmax": 3505
+    },
+    {
+      "topic": 8,
+      "top_words": [
+        "car",
+        "insurance",
+        "vehicle",
+        "driver",
+        "auto",
+        "drive",
+        "company",
+        "accident",
+        "coverage",
+        "policy"
+      ],
+      "npmi": 0.1812,
+      "n_docs_argmax": 3337
+    },
+    {
+      "topic": 9,
+      "top_words": [
+        "weight",
+        "loss",
+        "diet",
+        "pill",
+        "fat",
+        "appetite",
+        "suppressant",
+        "supplement",
+        "body",
+        "lose"
+      ],
+      "npmi": 0.3601,
+      "n_docs_argmax": 1858
+    },
+    {
+      "topic": 10,
+      "top_words": [
+        "game",
+        "player",
+        "play",
+        "slot",
+        "video",
+        "win",
+        "playe",
+        "team",
+        "online",
+        "poker"
+      ],
+      "npmi": 0.1894,
+      "n_docs_argmax": 6749
+    },
+    {
+      "topic": 11,
+      "top_words": [
+        "cbd",
+        "oil",
+        "gummy",
+        "hemp",
+        "thc",
+        "cannabis",
+        "vape",
+        "pain",
+        "product",
+        "skin"
+      ],
+      "npmi": 0.2699,
+      "n_docs_argmax": 983
+    },
+    {
+      "topic": 12,
+      "top_words": [
+        "state",
+        "government",
+        "country",
+        "president",
+        "law",
+        "political",
+        "war",
+        "unite",
+        "party",
+        "public"
+      ],
+      "npmi": 0.0917,
+      "n_docs_argmax": 12992
+    },
+    {
+      "topic": 13,
+      "top_words": [
+        "student",
+        "school",
+        "education",
+        "teacher",
+        "university",
+        "child",
+        "college",
+        "learn",
+        "program",
+        "teach"
+      ],
+      "npmi": 0.1843,
+      "n_docs_argmax": 6665
+    },
+    {
+      "topic": 14,
+      "top_words": [
+        "god",
+        "jesus",
+        "church",
+        "christ",
+        "lord",
+        "christian",
+        "life",
+        "faith",
+        "bible",
+        "love"
+      ],
+      "npmi": 0.2493,
+      "n_docs_argmax": 3921
+    },
+    {
+      "topic": 15,
+      "top_words": [
+        "loan",
+        "credit",
+        "payday",
+        "card",
+        "mortgage",
+        "financial",
+        "money",
+        "pay",
+        "debt",
+        "lender"
+      ],
+      "npmi": 0.2518,
+      "n_docs_argmax": 2055
+    },
+    {
+      "topic": 16,
+      "top_words": [
+        "water",
+        "hair",
+        "clean",
+        "design",
+        "color",
+        "plant",
+        "paint",
+        "light",
+        "product",
+        "skin"
+      ],
+      "npmi": 0.0612,
+      "n_docs_argmax": 16739
+    },
+    {
+      "topic": 17,
+      "top_words": [
+        "book",
+        "story",
+        "read",
+        "writing",
+        "write",
+        "author",
+        "novel",
+        "character",
+        "reader",
+        "publish"
+      ],
+      "npmi": 0.1776,
+      "n_docs_argmax": 4963
+    },
+    {
+      "topic": 18,
+      "top_words": [
+        "music",
+        "song",
+        "album",
+        "band",
+        "record",
+        "sound",
+        "artist",
+        "guitar",
+        "release",
+        "play"
+      ],
+      "npmi": 0.1739,
+      "n_docs_argmax": 4143
+    },
+    {
+      "topic": 19,
+      "top_words": [
+        "site",
+        "website",
+        "content",
+        "page",
+        "search",
+        "blog",
+        "web",
+        "marketing",
+        "google",
+        "link"
+      ],
+      "npmi": 0.1796,
+      "n_docs_argmax": 5718
+    },
+    {
+      "topic": 20,
+      "top_words": [
+        "health",
+        "patient",
+        "care",
+        "treatment",
+        "medical",
+        "drug",
+        "doctor",
+        "disease",
+        "cancer",
+        "pain"
+      ],
+      "npmi": 0.1943,
+      "n_docs_argmax": 8307
+    },
+    {
+      "topic": 21,
+      "top_words": [
+        "bet",
+        "gamble",
+        "wager",
+        "enterprise",
+        "incentive",
+        "deposit",
+        "internet",
+        "web",
+        "free",
+        "establishment"
+      ],
+      "npmi": 0.2269,
+      "n_docs_argmax": 2300
+    },
+    {
+      "topic": 22,
+      "top_words": [
+        "hotel",
+        "city",
+        "beach",
+        "park",
+        "tour",
+        "travel",
+        "stay",
+        "trip",
+        "guest",
+        "restaurant"
+      ],
+      "npmi": 0.1408,
+      "n_docs_argmax": 9052
+    },
+    {
+      "topic": 23,
+      "top_words": [
+        "male",
+        "enhancement",
+        "pill",
+        "viagra",
+        "penis",
+        "cialis",
+        "erectile",
+        "dysfunction",
+        "sex",
+        "man"
+      ],
+      "npmi": 0.3448,
+      "n_docs_argmax": 1815
+    },
+    {
+      "topic": 24,
+      "top_words": [
+        "film",
+        "movie",
+        "character",
+        "story",
+        "watch",
+        "actor",
+        "director",
+        "scene",
+        "star",
+        "camera"
+      ],
+      "npmi": 0.1119,
+      "n_docs_argmax": 4612
+    }
+  ]
+}

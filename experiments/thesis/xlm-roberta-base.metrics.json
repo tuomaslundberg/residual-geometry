@@ -1,0 +1,1401 @@
+{
+  "model": "FacebookAI/xlm-roberta-base",
+  "sample": "/scratch/project_462001491/tlundber/data/thesis-sample-v4/sample-N18000-cap500-s20261020",
+  "seed": 20261021,
+  "n_docs": {
+    "fi": 143977,
+    "en": 143744
+  },
+  "inlp_directions_removed": 2,
+  "A": {
+    "web_gap_norm": 0.058,
+    "mean_doc_norm": 1.0,
+    "parallel": {
+      "ep": {
+        "gap_norm": 0.0657,
+        "cos_with_web": 0.926,
+        "cos_with_web_ci95": [
+          0.925,
+          0.926
+        ],
+        "inside_inlp": 0.931
+      },
+      "ip": {
+        "gap_norm": 0.0554,
+        "cos_with_web": 0.907,
+        "cos_with_web_ci95": [
+          0.905,
+          0.908
+        ],
+        "inside_inlp": 0.908
+      }
+    },
+    "cos_ep_ip": 0.963,
+    "web_inside_parallel_span": 0.928,
+    "web_inside_inlp": 1.0,
+    "cultural_inside_inlp": 0.436,
+    "per_register": {
+      "HI": {
+        "cos_with_web": 0.99,
+        "cos_with_ep": 0.905,
+        "cos_with_ip": 0.886
+      },
+      "ID": {
+        "cos_with_web": 0.985,
+        "cos_with_ep": 0.903,
+        "cos_with_ip": 0.883
+      },
+      "IN": {
+        "cos_with_web": 0.989,
+        "cos_with_ep": 0.925,
+        "cos_with_ip": 0.91
+      },
+      "IP": {
+        "cos_with_web": 0.98,
+        "cos_with_ep": 0.898,
+        "cos_with_ip": 0.895
+      },
+      "NA": {
+        "cos_with_web": 0.977,
+        "cos_with_ep": 0.896,
+        "cos_with_ip": 0.885
+      },
+      "OP": {
+        "cos_with_web": 0.994,
+        "cos_with_ep": 0.929,
+        "cos_with_ip": 0.899
+      },
+      "SP": {
+        "cos_with_web": 0.992,
+        "cos_with_ep": 0.935,
+        "cos_with_ip": 0.905
+      }
+    }
+  },
+  "B": {
+    "web": {
+      "fi": [
+        {
+          "decile": 1,
+          "finland_mention": 0.401,
+          "us_mention": 0.149,
+          "median_words": 958,
+          "top_tlds": {
+            "fi": 0.406,
+            "com": 0.347,
+            "net": 0.09,
+            "org": 0.033
+          },
+          "registers": {
+            "HI": 0.085,
+            "ID": 0.388,
+            "IN": 0.074,
+            "IP": 0.087,
+            "NA": 0.15,
+            "OP": 0.076,
+            "SP": 0.139
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.228,
+            "elokuva kirja tarina teos": 0.08,
+            "levy musiikki bändi albumi": 0.079
+          }
+        },
+        {
+          "decile": 2,
+          "finland_mention": 0.384,
+          "us_mention": 0.118,
+          "median_words": 804,
+          "top_tlds": {
+            "fi": 0.436,
+            "com": 0.335,
+            "net": 0.089,
+            "org": 0.03
+          },
+          "registers": {
+            "HI": 0.09,
+            "ID": 0.332,
+            "IN": 0.061,
+            "IP": 0.089,
+            "NA": 0.201,
+            "OP": 0.103,
+            "SP": 0.125
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.196,
+            "elokuva kirja tarina teos": 0.071,
+            "ruoka resepti uuni sekoittaa": 0.068
+          }
+        },
+        {
+          "decile": 3,
+          "finland_mention": 0.396,
+          "us_mention": 0.117,
+          "median_words": 734,
+          "top_tlds": {
+            "fi": 0.46,
+            "com": 0.319,
+            "net": 0.084,
+            "org": 0.03
+          },
+          "registers": {
+            "HI": 0.109,
+            "ID": 0.254,
+            "IN": 0.068,
+            "IP": 0.108,
+            "NA": 0.199,
+            "OP": 0.132,
+            "SP": 0.13
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.139,
+            "elokuva kirja tarina teos": 0.078,
+            "kaupunki hotelli matka alue": 0.064
+          }
+        },
+        {
+          "decile": 4,
+          "finland_mention": 0.414,
+          "us_mention": 0.116,
+          "median_words": 696,
+          "top_tlds": {
+            "fi": 0.483,
+            "com": 0.318,
+            "net": 0.073,
+            "org": 0.031
+          },
+          "registers": {
+            "HI": 0.136,
+            "ID": 0.176,
+            "IN": 0.085,
+            "IP": 0.136,
+            "NA": 0.182,
+            "OP": 0.156,
+            "SP": 0.129
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.096,
+            "elokuva kirja tarina teos": 0.081,
+            "kaupunki hotelli matka alue": 0.069
+          }
+        },
+        {
+          "decile": 5,
+          "finland_mention": 0.433,
+          "us_mention": 0.115,
+          "median_words": 685,
+          "top_tlds": {
+            "fi": 0.51,
+            "com": 0.318,
+            "net": 0.061,
+            "org": 0.03
+          },
+          "registers": {
+            "HI": 0.157,
+            "ID": 0.118,
+            "IN": 0.105,
+            "IP": 0.152,
+            "NA": 0.155,
+            "OP": 0.175,
+            "SP": 0.138
+          },
+          "top_topics": {
+            "elokuva kirja tarina teos": 0.087,
+            "laite sovellus tietokone tiedosto": 0.068,
+            "kaupunki hotelli matka alue": 0.067
+          }
+        },
+        {
+          "decile": 6,
+          "finland_mention": 0.447,
+          "us_mention": 0.108,
+          "median_words": 664,
+          "top_tlds": {
+            "fi": 0.549,
+            "com": 0.298,
+            "net": 0.054,
+            "org": 0.029
+          },
+          "registers": {
+            "HI": 0.176,
+            "ID": 0.069,
+            "IN": 0.123,
+            "IP": 0.166,
+            "NA": 0.131,
+            "OP": 0.178,
+            "SP": 0.156
+          },
+          "top_topics": {
+            "elokuva kirja tarina teos": 0.085,
+            "hallitus venäjä eurooppa maa": 0.08,
+            "laite sovellus tietokone tiedosto": 0.07
+          }
+        },
+        {
+          "decile": 7,
+          "finland_mention": 0.476,
+          "us_mention": 0.096,
+          "median_words": 640,
+          "top_tlds": {
+            "fi": 0.581,
+            "com": 0.281,
+            "net": 0.049,
+            "org": 0.028
+          },
+          "registers": {
+            "HI": 0.186,
+            "ID": 0.045,
+            "IN": 0.143,
+            "IP": 0.179,
+            "NA": 0.114,
+            "OP": 0.172,
+            "SP": 0.161
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.097,
+            "elokuva kirja tarina teos": 0.081,
+            "laite sovellus tietokone tiedosto": 0.076
+          }
+        },
+        {
+          "decile": 8,
+          "finland_mention": 0.501,
+          "us_mention": 0.09,
+          "median_words": 616,
+          "top_tlds": {
+            "fi": 0.628,
+            "com": 0.253,
+            "net": 0.043,
+            "org": 0.024
+          },
+          "registers": {
+            "HI": 0.195,
+            "ID": 0.028,
+            "IN": 0.168,
+            "IP": 0.179,
+            "NA": 0.102,
+            "OP": 0.163,
+            "SP": 0.165
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.118,
+            "yritys asiakas työntekijä liiketoiminta": 0.095,
+            "opiskelija koulutus yliopisto työ": 0.091
+          }
+        },
+        {
+          "decile": 9,
+          "finland_mention": 0.527,
+          "us_mention": 0.08,
+          "median_words": 600,
+          "top_tlds": {
+            "fi": 0.674,
+            "com": 0.219,
+            "net": 0.037,
+            "org": 0.022
+          },
+          "registers": {
+            "HI": 0.178,
+            "ID": 0.014,
+            "IN": 0.225,
+            "IP": 0.182,
+            "NA": 0.098,
+            "OP": 0.149,
+            "SP": 0.155
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.139,
+            "yritys asiakas työntekijä liiketoiminta": 0.116,
+            "opiskelija koulutus yliopisto työ": 0.101
+          }
+        },
+        {
+          "decile": 10,
+          "finland_mention": 0.573,
+          "us_mention": 0.059,
+          "median_words": 573,
+          "top_tlds": {
+            "fi": 0.745,
+            "com": 0.172,
+            "net": 0.025,
+            "org": 0.018
+          },
+          "registers": {
+            "HI": 0.116,
+            "ID": 0.005,
+            "IN": 0.376,
+            "IP": 0.15,
+            "NA": 0.097,
+            "OP": 0.125,
+            "SP": 0.13
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.208,
+            "yritys asiakas työntekijä liiketoiminta": 0.159,
+            "opiskelija koulutus yliopisto työ": 0.116
+          }
+        }
+      ],
+      "en": [
+        {
+          "decile": 1,
+          "finland_mention": 0.001,
+          "us_mention": 0.117,
+          "median_words": 847,
+          "top_tlds": {
+            "com": 0.677,
+            "org": 0.077,
+            "uk": 0.056,
+            "net": 0.05
+          },
+          "registers": {
+            "HI": 0.186,
+            "ID": 0.267,
+            "IN": 0.055,
+            "IP": 0.079,
+            "NA": 0.134,
+            "OP": 0.199,
+            "SP": 0.08
+          },
+          "top_topics": {
+            "water hair clean design": 0.145,
+            "think really feel tell": 0.114,
+            "game player play slot": 0.071
+          }
+        },
+        {
+          "decile": 2,
+          "finland_mention": 0.003,
+          "us_mention": 0.146,
+          "median_words": 950,
+          "top_tlds": {
+            "com": 0.694,
+            "org": 0.076,
+            "uk": 0.049,
+            "net": 0.047
+          },
+          "registers": {
+            "HI": 0.168,
+            "ID": 0.239,
+            "IN": 0.069,
+            "IP": 0.075,
+            "NA": 0.133,
+            "OP": 0.188,
+            "SP": 0.129
+          },
+          "top_topics": {
+            "water hair clean design": 0.127,
+            "think really feel tell": 0.104,
+            "game player play slot": 0.075
+          }
+        },
+        {
+          "decile": 3,
+          "finland_mention": 0.003,
+          "us_mention": 0.173,
+          "median_words": 986,
+          "top_tlds": {
+            "com": 0.702,
+            "org": 0.076,
+            "net": 0.045,
+            "uk": 0.042
+          },
+          "registers": {
+            "HI": 0.164,
+            "ID": 0.213,
+            "IN": 0.072,
+            "IP": 0.089,
+            "NA": 0.128,
+            "OP": 0.177,
+            "SP": 0.157
+          },
+          "top_topics": {
+            "water hair clean design": 0.118,
+            "think really feel tell": 0.089,
+            "state government country president": 0.072
+          }
+        },
+        {
+          "decile": 4,
+          "finland_mention": 0.003,
+          "us_mention": 0.195,
+          "median_words": 1015,
+          "top_tlds": {
+            "com": 0.699,
+            "org": 0.079,
+            "net": 0.043,
+            "uk": 0.036
+          },
+          "registers": {
+            "HI": 0.151,
+            "ID": 0.175,
+            "IN": 0.087,
+            "IP": 0.114,
+            "NA": 0.122,
+            "OP": 0.175,
+            "SP": 0.177
+          },
+          "top_topics": {
+            "water hair clean design": 0.112,
+            "state government country president": 0.081,
+            "think really feel tell": 0.074
+          }
+        },
+        {
+          "decile": 5,
+          "finland_mention": 0.003,
+          "us_mention": 0.221,
+          "median_words": 1016,
+          "top_tlds": {
+            "com": 0.695,
+            "org": 0.082,
+            "net": 0.04,
+            "uk": 0.033
+          },
+          "registers": {
+            "HI": 0.15,
+            "ID": 0.142,
+            "IN": 0.109,
+            "IP": 0.116,
+            "NA": 0.128,
+            "OP": 0.167,
+            "SP": 0.187
+          },
+          "top_topics": {
+            "water hair clean design": 0.112,
+            "state government country president": 0.095,
+            "business company customer service": 0.077
+          }
+        },
+        {
+          "decile": 6,
+          "finland_mention": 0.003,
+          "us_mention": 0.244,
+          "median_words": 1025,
+          "top_tlds": {
+            "com": 0.693,
+            "org": 0.082,
+            "net": 0.039,
+            "uk": 0.032
+          },
+          "registers": {
+            "HI": 0.137,
+            "ID": 0.119,
+            "IN": 0.125,
+            "IP": 0.141,
+            "NA": 0.139,
+            "OP": 0.154,
+            "SP": 0.186
+          },
+          "top_topics": {
+            "state government country president": 0.11,
+            "water hair clean design": 0.104,
+            "business company customer service": 0.086
+          }
+        },
+        {
+          "decile": 7,
+          "finland_mention": 0.004,
+          "us_mention": 0.259,
+          "median_words": 982,
+          "top_tlds": {
+            "com": 0.67,
+            "org": 0.088,
+            "net": 0.036,
+            "uk": 0.03
+          },
+          "registers": {
+            "HI": 0.138,
+            "ID": 0.091,
+            "IN": 0.148,
+            "IP": 0.153,
+            "NA": 0.157,
+            "OP": 0.129,
+            "SP": 0.184
+          },
+          "top_topics": {
+            "state government country president": 0.124,
+            "water hair clean design": 0.112,
+            "business company customer service": 0.089
+          }
+        },
+        {
+          "decile": 8,
+          "finland_mention": 0.005,
+          "us_mention": 0.268,
+          "median_words": 986,
+          "top_tlds": {
+            "com": 0.661,
+            "org": 0.092,
+            "net": 0.035,
+            "uk": 0.031
+          },
+          "registers": {
+            "HI": 0.128,
+            "ID": 0.076,
+            "IN": 0.184,
+            "IP": 0.178,
+            "NA": 0.161,
+            "OP": 0.114,
+            "SP": 0.158
+          },
+          "top_topics": {
+            "state government country president": 0.138,
+            "water hair clean design": 0.112,
+            "business company customer service": 0.102
+          }
+        },
+        {
+          "decile": 9,
+          "finland_mention": 0.007,
+          "us_mention": 0.251,
+          "median_words": 969,
+          "top_tlds": {
+            "com": 0.644,
+            "org": 0.088,
+            "net": 0.034,
+            "uk": 0.025
+          },
+          "registers": {
+            "HI": 0.118,
+            "ID": 0.062,
+            "IN": 0.236,
+            "IP": 0.212,
+            "NA": 0.171,
+            "OP": 0.084,
+            "SP": 0.116
+          },
+          "top_topics": {
+            "state government country president": 0.148,
+            "business company customer service": 0.122,
+            "water hair clean design": 0.113
+          }
+        },
+        {
+          "decile": 10,
+          "finland_mention": 0.01,
+          "us_mention": 0.205,
+          "median_words": 948,
+          "top_tlds": {
+            "com": 0.61,
+            "org": 0.084,
+            "net": 0.037,
+            "uk": 0.025
+          },
+          "registers": {
+            "HI": 0.089,
+            "ID": 0.044,
+            "IN": 0.345,
+            "IP": 0.265,
+            "NA": 0.157,
+            "OP": 0.043,
+            "SP": 0.056
+          },
+          "top_topics": {
+            "business company customer service": 0.143,
+            "water hair clean design": 0.137,
+            "health patient care treatment": 0.13
+          }
+        }
+      ]
+    },
+    "cultural": {
+      "fi": [
+        {
+          "decile": 1,
+          "finland_mention": 0.523,
+          "us_mention": 0.095,
+          "median_words": 640,
+          "top_tlds": {
+            "fi": 0.611,
+            "com": 0.273,
+            "net": 0.026,
+            "org": 0.021
+          },
+          "registers": {
+            "HI": 0.193,
+            "ID": 0.009,
+            "IN": 0.29,
+            "IP": 0.24,
+            "NA": 0.082,
+            "OP": 0.049,
+            "SP": 0.138
+          },
+          "top_topics": {
+            "yritys asiakas työntekijä liiketoiminta": 0.198,
+            "laite sovellus tietokone tiedosto": 0.166,
+            "opiskelija koulutus yliopisto työ": 0.147
+          }
+        },
+        {
+          "decile": 2,
+          "finland_mention": 0.536,
+          "us_mention": 0.113,
+          "median_words": 653,
+          "top_tlds": {
+            "fi": 0.606,
+            "com": 0.264,
+            "net": 0.034,
+            "org": 0.027
+          },
+          "registers": {
+            "HI": 0.153,
+            "ID": 0.017,
+            "IN": 0.209,
+            "IP": 0.224,
+            "NA": 0.096,
+            "OP": 0.088,
+            "SP": 0.212
+          },
+          "top_topics": {
+            "yritys asiakas työntekijä liiketoiminta": 0.139,
+            "opiskelija koulutus yliopisto työ": 0.13,
+            "hallitus venäjä eurooppa maa": 0.125
+          }
+        },
+        {
+          "decile": 3,
+          "finland_mention": 0.526,
+          "us_mention": 0.128,
+          "median_words": 680,
+          "top_tlds": {
+            "fi": 0.59,
+            "com": 0.265,
+            "net": 0.037,
+            "org": 0.031
+          },
+          "registers": {
+            "HI": 0.128,
+            "ID": 0.029,
+            "IN": 0.175,
+            "IP": 0.205,
+            "NA": 0.098,
+            "OP": 0.131,
+            "SP": 0.234
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.13,
+            "yritys asiakas työntekijä liiketoiminta": 0.107,
+            "opiskelija koulutus yliopisto työ": 0.096
+          }
+        },
+        {
+          "decile": 4,
+          "finland_mention": 0.51,
+          "us_mention": 0.135,
+          "median_words": 684,
+          "top_tlds": {
+            "fi": 0.578,
+            "com": 0.269,
+            "net": 0.046,
+            "org": 0.03
+          },
+          "registers": {
+            "HI": 0.121,
+            "ID": 0.048,
+            "IN": 0.147,
+            "IP": 0.184,
+            "NA": 0.108,
+            "OP": 0.171,
+            "SP": 0.22
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.119,
+            "elokuva kirja tarina teos": 0.09,
+            "opiskelija koulutus yliopisto työ": 0.076
+          }
+        },
+        {
+          "decile": 5,
+          "finland_mention": 0.485,
+          "us_mention": 0.129,
+          "median_words": 694,
+          "top_tlds": {
+            "fi": 0.567,
+            "com": 0.272,
+            "net": 0.053,
+            "org": 0.032
+          },
+          "registers": {
+            "HI": 0.114,
+            "ID": 0.082,
+            "IN": 0.121,
+            "IP": 0.156,
+            "NA": 0.12,
+            "OP": 0.201,
+            "SP": 0.205
+          },
+          "top_topics": {
+            "hallitus venäjä eurooppa maa": 0.113,
+            "elokuva kirja tarina teos": 0.098,
+            "kaupunki hotelli matka alue": 0.069
+          }
+        },
+        {
+          "decile": 6,
+          "finland_mention": 0.456,
+          "us_mention": 0.119,
+          "median_words": 697,
+          "top_tlds": {
+            "fi": 0.544,
+            "com": 0.282,
+            "net": 0.062,
+            "org": 0.028
+          },
+          "registers": {
+            "HI": 0.115,
+            "ID": 0.124,
+            "IN": 0.109,
+            "IP": 0.137,
+            "NA": 0.142,
+            "OP": 0.209,
+            "SP": 0.164
+          },
+          "top_topics": {
+            "elokuva kirja tarina teos": 0.099,
+            "hallitus venäjä eurooppa maa": 0.09,
+            "kaupunki hotelli matka alue": 0.07
+          }
+        },
+        {
+          "decile": 7,
+          "finland_mention": 0.434,
+          "us_mention": 0.109,
+          "median_words": 703,
+          "top_tlds": {
+            "fi": 0.533,
+            "com": 0.299,
+            "net": 0.068,
+            "org": 0.03
+          },
+          "registers": {
+            "HI": 0.117,
+            "ID": 0.183,
+            "IN": 0.097,
+            "IP": 0.104,
+            "NA": 0.167,
+            "OP": 0.211,
+            "SP": 0.122
+          },
+          "top_topics": {
+            "elokuva kirja tarina teos": 0.096,
+            "ihan kyllä vähän käydä": 0.089,
+            "hallitus venäjä eurooppa maa": 0.075
+          }
+        },
+        {
+          "decile": 8,
+          "finland_mention": 0.4,
+          "us_mention": 0.09,
+          "median_words": 694,
+          "top_tlds": {
+            "fi": 0.513,
+            "com": 0.301,
+            "net": 0.079,
+            "org": 0.029
+          },
+          "registers": {
+            "HI": 0.124,
+            "ID": 0.25,
+            "IN": 0.092,
+            "IP": 0.083,
+            "NA": 0.196,
+            "OP": 0.178,
+            "SP": 0.076
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.127,
+            "elokuva kirja tarina teos": 0.079,
+            "ruoka resepti uuni sekoittaa": 0.065
+          }
+        },
+        {
+          "decile": 9,
+          "finland_mention": 0.359,
+          "us_mention": 0.075,
+          "median_words": 702,
+          "top_tlds": {
+            "fi": 0.493,
+            "com": 0.314,
+            "net": 0.088,
+            "org": 0.027
+          },
+          "registers": {
+            "HI": 0.147,
+            "ID": 0.319,
+            "IN": 0.088,
+            "IP": 0.06,
+            "NA": 0.216,
+            "OP": 0.129,
+            "SP": 0.042
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.183,
+            "ruoka resepti uuni sekoittaa": 0.087,
+            "hoito lääke potilas oire": 0.065
+          }
+        },
+        {
+          "decile": 10,
+          "finland_mention": 0.323,
+          "us_mention": 0.056,
+          "median_words": 693,
+          "top_tlds": {
+            "fi": 0.437,
+            "com": 0.321,
+            "net": 0.111,
+            "eu": 0.026
+          },
+          "registers": {
+            "HI": 0.215,
+            "ID": 0.369,
+            "IN": 0.098,
+            "IP": 0.035,
+            "NA": 0.204,
+            "OP": 0.063,
+            "SP": 0.016
+          },
+          "top_topics": {
+            "ihan kyllä vähän käydä": 0.244,
+            "ruoka resepti uuni sekoittaa": 0.157,
+            "hoito lääke potilas oire": 0.076
+          }
+        }
+      ],
+      "en": [
+        {
+          "decile": 1,
+          "finland_mention": 0.001,
+          "us_mention": 0.262,
+          "median_words": 830,
+          "top_tlds": {
+            "com": 0.729,
+            "org": 0.069,
+            "net": 0.038,
+            "ca": 0.018
+          },
+          "registers": {
+            "HI": 0.216,
+            "ID": 0.012,
+            "IN": 0.172,
+            "IP": 0.379,
+            "NA": 0.122,
+            "OP": 0.052,
+            "SP": 0.048
+          },
+          "top_topics": {
+            "bedroom room home floor": 0.198,
+            "business company customer service": 0.155,
+            "site website content page": 0.085
+          }
+        },
+        {
+          "decile": 2,
+          "finland_mention": 0.001,
+          "us_mention": 0.262,
+          "median_words": 922,
+          "top_tlds": {
+            "com": 0.71,
+            "org": 0.08,
+            "net": 0.038,
+            "edu": 0.017
+          },
+          "registers": {
+            "HI": 0.243,
+            "ID": 0.041,
+            "IN": 0.167,
+            "IP": 0.194,
+            "NA": 0.14,
+            "OP": 0.103,
+            "SP": 0.111
+          },
+          "top_topics": {
+            "business company customer service": 0.132,
+            "water hair clean design": 0.104,
+            "window download app file": 0.088
+          }
+        },
+        {
+          "decile": 3,
+          "finland_mention": 0.003,
+          "us_mention": 0.245,
+          "median_words": 959,
+          "top_tlds": {
+            "com": 0.709,
+            "org": 0.08,
+            "net": 0.039,
+            "uk": 0.018
+          },
+          "registers": {
+            "HI": 0.213,
+            "ID": 0.076,
+            "IN": 0.151,
+            "IP": 0.145,
+            "NA": 0.136,
+            "OP": 0.136,
+            "SP": 0.144
+          },
+          "top_topics": {
+            "business company customer service": 0.119,
+            "water hair clean design": 0.112,
+            "state government country president": 0.082
+          }
+        },
+        {
+          "decile": 4,
+          "finland_mention": 0.003,
+          "us_mention": 0.229,
+          "median_words": 980,
+          "top_tlds": {
+            "com": 0.716,
+            "org": 0.077,
+            "net": 0.038,
+            "uk": 0.022
+          },
+          "registers": {
+            "HI": 0.174,
+            "ID": 0.103,
+            "IN": 0.141,
+            "IP": 0.123,
+            "NA": 0.127,
+            "OP": 0.167,
+            "SP": 0.166
+          },
+          "top_topics": {
+            "water hair clean design": 0.125,
+            "business company customer service": 0.099,
+            "state government country president": 0.081
+          }
+        },
+        {
+          "decile": 5,
+          "finland_mention": 0.003,
+          "us_mention": 0.216,
+          "median_words": 1000,
+          "top_tlds": {
+            "com": 0.697,
+            "org": 0.076,
+            "net": 0.038,
+            "uk": 0.027
+          },
+          "registers": {
+            "HI": 0.147,
+            "ID": 0.135,
+            "IN": 0.128,
+            "IP": 0.115,
+            "NA": 0.128,
+            "OP": 0.176,
+            "SP": 0.17
+          },
+          "top_topics": {
+            "water hair clean design": 0.133,
+            "business company customer service": 0.083,
+            "state government country president": 0.081
+          }
+        },
+        {
+          "decile": 6,
+          "finland_mention": 0.004,
+          "us_mention": 0.205,
+          "median_words": 1008,
+          "top_tlds": {
+            "com": 0.686,
+            "org": 0.085,
+            "net": 0.039,
+            "uk": 0.033
+          },
+          "registers": {
+            "HI": 0.124,
+            "ID": 0.165,
+            "IN": 0.126,
+            "IP": 0.101,
+            "NA": 0.133,
+            "OP": 0.172,
+            "SP": 0.178
+          },
+          "top_topics": {
+            "water hair clean design": 0.131,
+            "state government country president": 0.089,
+            "business company customer service": 0.079
+          }
+        },
+        {
+          "decile": 7,
+          "finland_mention": 0.006,
+          "us_mention": 0.193,
+          "median_words": 1001,
+          "top_tlds": {
+            "com": 0.668,
+            "org": 0.086,
+            "net": 0.042,
+            "uk": 0.04
+          },
+          "registers": {
+            "HI": 0.103,
+            "ID": 0.19,
+            "IN": 0.122,
+            "IP": 0.097,
+            "NA": 0.134,
+            "OP": 0.175,
+            "SP": 0.178
+          },
+          "top_topics": {
+            "water hair clean design": 0.13,
+            "state government country president": 0.095,
+            "think really feel tell": 0.079
+          }
+        },
+        {
+          "decile": 8,
+          "finland_mention": 0.006,
+          "us_mention": 0.175,
+          "median_words": 1030,
+          "top_tlds": {
+            "com": 0.641,
+            "org": 0.093,
+            "uk": 0.051,
+            "net": 0.04
+          },
+          "registers": {
+            "HI": 0.085,
+            "ID": 0.21,
+            "IN": 0.123,
+            "IP": 0.095,
+            "NA": 0.148,
+            "OP": 0.162,
+            "SP": 0.177
+          },
+          "top_topics": {
+            "water hair clean design": 0.13,
+            "state government country president": 0.12,
+            "think really feel tell": 0.082
+          }
+        },
+        {
+          "decile": 9,
+          "finland_mention": 0.007,
+          "us_mention": 0.15,
+          "median_words": 1019,
+          "top_tlds": {
+            "com": 0.621,
+            "org": 0.087,
+            "uk": 0.062,
+            "net": 0.046
+          },
+          "registers": {
+            "HI": 0.069,
+            "ID": 0.237,
+            "IN": 0.129,
+            "IP": 0.08,
+            "NA": 0.173,
+            "OP": 0.156,
+            "SP": 0.157
+          },
+          "top_topics": {
+            "state government country president": 0.138,
+            "water hair clean design": 0.125,
+            "think really feel tell": 0.086
+          }
+        },
+        {
+          "decile": 10,
+          "finland_mention": 0.007,
+          "us_mention": 0.142,
+          "median_words": 983,
+          "top_tlds": {
+            "com": 0.566,
+            "org": 0.092,
+            "uk": 0.077,
+            "net": 0.048
+          },
+          "registers": {
+            "HI": 0.055,
+            "ID": 0.26,
+            "IN": 0.171,
+            "IP": 0.095,
+            "NA": 0.189,
+            "OP": 0.132,
+            "SP": 0.1
+          },
+          "top_topics": {
+            "state government country president": 0.151,
+            "water hair clean design": 0.134,
+            "health patient care treatment": 0.097
+          }
+        }
+      ]
+    }
+  },
+  "C": {
+    "translation_p_at_1": {
+      "raw": {
+        "ep": {
+          "fi_en": 0.297,
+          "en_fi": 0.2095
+        },
+        "ip": {
+          "fi_en": 0.2455,
+          "en_fi": 0.2985
+        }
+      },
+      "global": {
+        "ep": {
+          "fi_en": 0.5545,
+          "en_fi": 0.09
+        },
+        "ip": {
+          "fi_en": 0.258,
+          "en_fi": 0.1825
+        }
+      },
+      "mean": {
+        "ep": {
+          "fi_en": 0.7525,
+          "en_fi": 0.5885
+        },
+        "ip": {
+          "fi_en": 0.605,
+          "en_fi": 0.531
+        }
+      },
+      "leace": {
+        "ep": {
+          "fi_en": 0.5635,
+          "en_fi": 0.6275
+        },
+        "ip": {
+          "fi_en": 0.508,
+          "en_fi": 0.5165
+        }
+      },
+      "inlp": {
+        "ep": {
+          "fi_en": 0.5825,
+          "en_fi": 0.6595
+        },
+        "ip": {
+          "fi_en": 0.533,
+          "en_fi": 0.535
+        }
+      },
+      "transdir_ep": {
+        "ep": {
+          "fi_en": 0.732,
+          "en_fi": 0.7335
+        },
+        "ip": {
+          "fi_en": 0.542,
+          "en_fi": 0.5325
+        }
+      },
+      "transdir_ip": {
+        "ep": {
+          "fi_en": 0.663,
+          "en_fi": 0.7255
+        },
+        "ip": {
+          "fi_en": 0.5755,
+          "en_fi": 0.577
+        }
+      }
+    },
+    "web": {
+      "raw": {
+        "same_register": 0.494,
+        "neighbour_mentions_finland_if_query_does": 0.106,
+        "neighbour_mentions_finland_if_query_does_not": 0.053,
+        "overlap_with_raw": 1.0
+      },
+      "global": {
+        "same_register": 0.391,
+        "neighbour_mentions_finland_if_query_does": 0.011,
+        "neighbour_mentions_finland_if_query_does_not": 0.004,
+        "overlap_with_raw": 0.018
+      },
+      "mean": {
+        "same_register": 0.609,
+        "neighbour_mentions_finland_if_query_does": 0.008,
+        "neighbour_mentions_finland_if_query_does_not": 0.005,
+        "overlap_with_raw": 0.105
+      },
+      "leace": {
+        "same_register": 0.555,
+        "neighbour_mentions_finland_if_query_does": 0.006,
+        "neighbour_mentions_finland_if_query_does_not": 0.005,
+        "overlap_with_raw": 0.158
+      },
+      "inlp": {
+        "same_register": 0.494,
+        "neighbour_mentions_finland_if_query_does": 0.006,
+        "neighbour_mentions_finland_if_query_does_not": 0.004,
+        "overlap_with_raw": 0.121
+      },
+      "transdir_ep": {
+        "same_register": 0.527,
+        "neighbour_mentions_finland_if_query_does": 0.013,
+        "neighbour_mentions_finland_if_query_does_not": 0.009,
+        "overlap_with_raw": 0.11
+      },
+      "transdir_ip": {
+        "same_register": 0.527,
+        "neighbour_mentions_finland_if_query_does": 0.018,
+        "neighbour_mentions_finland_if_query_does_not": 0.011,
+        "overlap_with_raw": 0.191
+      }
+    },
+    "web_base_rate_finland_en": 0.004
+  },
+  "probe": {
+    "standardised": true,
+    "C": 0.01,
+    "C_grid": [
+      0.001,
+      0.01,
+      0.1,
+      1.0
+    ],
+    "chosen_by": "inner 3-fold CV, unerased Finnish register probe"
+  },
+  "D": {
+    "raw": {
+      "language_accuracy": 0.9999,
+      "fi_register_acc": 0.834,
+      "en_register_acc": 0.8727,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.7409,
+      "transfer_en_fi_f1": 0.5482,
+      "register_rsa": 0.4481,
+      "register_rsa_null": {
+        "null_mean": 0.0043,
+        "null_p05": -0.3975,
+        "null_p95": 0.4314,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.043956
+      },
+      "fi_topic_acc": 0.6893,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7395,
+      "en_topic_majority": 0.1199
+    },
+    "global": {
+      "language_accuracy": 0.9999,
+      "fi_register_acc": 0.834,
+      "en_register_acc": 0.8727,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.741,
+      "transfer_en_fi_f1": 0.5483,
+      "register_rsa": 0.4519,
+      "register_rsa_null": {
+        "null_mean": 0.0042,
+        "null_p05": -0.4052,
+        "null_p95": 0.4286,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.041958
+      },
+      "fi_topic_acc": 0.6893,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7391,
+      "en_topic_majority": 0.1199
+    },
+    "mean": {
+      "language_accuracy": 0.5,
+      "fi_register_acc": 0.8341,
+      "en_register_acc": 0.8726,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.7761,
+      "transfer_en_fi_f1": 0.7062,
+      "register_rsa": 0.4519,
+      "register_rsa_null": {
+        "null_mean": 0.0095,
+        "null_p05": -0.3768,
+        "null_p95": 0.4468,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.047952
+      },
+      "fi_topic_acc": 0.6894,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7395,
+      "en_topic_majority": 0.1199
+    },
+    "leace": {
+      "language_accuracy": 0.5,
+      "fi_register_acc": 0.8337,
+      "en_register_acc": 0.8729,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.7775,
+      "transfer_en_fi_f1": 0.7064,
+      "register_rsa": 0.4481,
+      "register_rsa_null": {
+        "null_mean": 0.0033,
+        "null_p05": -0.4018,
+        "null_p95": 0.4273,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.043956
+      },
+      "fi_topic_acc": 0.6892,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7393,
+      "en_topic_majority": 0.1199
+    },
+    "inlp": {
+      "language_accuracy": 0.5,
+      "fi_register_acc": 0.8317,
+      "en_register_acc": 0.873,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.6703,
+      "transfer_en_fi_f1": 0.6186,
+      "register_rsa": 0.7584,
+      "register_rsa_null": {
+        "null_mean": 0.0133,
+        "null_p05": -0.4002,
+        "null_p95": 0.4416,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.003996
+      },
+      "fi_topic_acc": 0.6887,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7401,
+      "en_topic_majority": 0.1199
+    },
+    "transdir_ep": {
+      "language_accuracy": 0.9975,
+      "fi_register_acc": 0.8339,
+      "en_register_acc": 0.873,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.7062,
+      "transfer_en_fi_f1": 0.6527,
+      "register_rsa": 0.4468,
+      "register_rsa_null": {
+        "null_mean": 0.0038,
+        "null_p05": -0.4105,
+        "null_p95": 0.4407,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.050949
+      },
+      "fi_topic_acc": 0.69,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7398,
+      "en_topic_majority": 0.1199
+    },
+    "transdir_ip": {
+      "language_accuracy": 0.9989,
+      "fi_register_acc": 0.8337,
+      "en_register_acc": 0.873,
+      "register_chance": 0.1429,
+      "transfer_fi_en_f1": 0.6727,
+      "transfer_en_fi_f1": 0.6341,
+      "register_rsa": 0.4481,
+      "register_rsa_null": {
+        "null_mean": 0.0034,
+        "null_p05": -0.4057,
+        "null_p95": 0.4325,
+        "n_permutations": 1000,
+        "permutation_pvalue": 0.044955
+      },
+      "fi_topic_acc": 0.6898,
+      "fi_topic_majority": 0.082,
+      "en_topic_acc": 0.7393,
+      "en_topic_majority": 0.1199
+    }
+  }
+}

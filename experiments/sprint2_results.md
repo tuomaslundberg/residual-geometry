@@ -7,6 +7,8 @@
 
 ## Encoder comparison: LaBSE vs XLM-R base (Phase 1 replicated)
 
+*Note 2026-10-21: probe accuracies for XLM-R in this file come from unscaled probes, which underfit its anisotropic space badly; standardised, XLM-R encodes register at least as well as LaBSE. See `thesis_analyses.md` § D.*
+
 | | LaBSE identity | XLM-R identity |
 |---|---|---|
 | Language probe selectivity | +0.49 | +0.50 |

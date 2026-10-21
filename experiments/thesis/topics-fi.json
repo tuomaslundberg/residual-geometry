@@ -1,0 +1,460 @@
+{
+  "lang": "fi",
+  "k_curve": [
+    {
+      "k": 8,
+      "npmi_mean": 0.1503
+    },
+    {
+      "k": 12,
+      "npmi_mean": 0.1503
+    },
+    {
+      "k": 16,
+      "npmi_mean": 0.1532
+    },
+    {
+      "k": 20,
+      "npmi_mean": 0.1604
+    },
+    {
+      "k": 25,
+      "npmi_mean": 0.161
+    },
+    {
+      "k": 30,
+      "npmi_mean": 0.15
+    }
+  ],
+  "k": 25,
+  "n_docs": 144000,
+  "vocab_size": 30000,
+  "max_words": 500,
+  "topics": [
+    {
+      "topic": 0,
+      "top_words": [
+        "ihan",
+        "kyllä",
+        "vähän",
+        "käydä",
+        "tuntua",
+        "siis",
+        "tietää",
+        "joku",
+        "ehkä",
+        "sanoa"
+      ],
+      "npmi": 0.0712,
+      "n_docs_argmax": 9711
+    },
+    {
+      "topic": 1,
+      "top_words": [
+        "kasino",
+        "bonus",
+        "nettikasino",
+        "pelaaja",
+        "casino",
+        "talletus",
+        "ilmaiskierros",
+        "pelata",
+        "online",
+        "pelaaminen"
+      ],
+      "npmi": 0.3118,
+      "n_docs_argmax": 4484
+    },
+    {
+      "topic": 2,
+      "top_words": [
+        "laina",
+        "pikavippi",
+        "pankki",
+        "korko",
+        "hakea",
+        "euro",
+        "vippi",
+        "luotto",
+        "vakuus",
+        "maksaa"
+      ],
+      "npmi": 0.3028,
+      "n_docs_argmax": 2716
+    },
+    {
+      "topic": 3,
+      "top_words": [
+        "yritys",
+        "asiakas",
+        "työntekijä",
+        "liiketoiminta",
+        "palvelu",
+        "yrittäjä",
+        "työ",
+        "toiminta",
+        "organisaatio",
+        "tavoite"
+      ],
+      "npmi": 0.1083,
+      "n_docs_argmax": 8583
+    },
+    {
+      "topic": 4,
+      "top_words": [
+        "kasvi",
+        "vesi",
+        "puu",
+        "maaperä",
+        "kukka",
+        "puutarha",
+        "lehti",
+        "siemen",
+        "istuttaa",
+        "kasvaa"
+      ],
+      "npmi": 0.2019,
+      "n_docs_argmax": 3992
+    },
+    {
+      "topic": 5,
+      "top_words": [
+        "hoito",
+        "lääke",
+        "potilas",
+        "oire",
+        "lääkäri",
+        "sairaus",
+        "kipu",
+        "keho",
+        "tauti",
+        "tutkimus"
+      ],
+      "npmi": 0.1984,
+      "n_docs_argmax": 7906
+    },
+    {
+      "topic": 6,
+      "top_words": [
+        "koira",
+        "pentu",
+        "kissa",
+        "rotu",
+        "eläin",
+        "lemmikki",
+        "omistaja",
+        "eläinlääkäri",
+        "kasvattaja",
+        "ruoka"
+      ],
+      "npmi": 0.216,
+      "n_docs_argmax": 2612
+    },
+    {
+      "topic": 7,
+      "top_words": [
+        "peli",
+        "pelaaja",
+        "pelata",
+        "pelaaminen",
+        "kortti",
+        "symboli",
+        "voitto",
+        "kolikko",
+        "pokeri",
+        "voittaa"
+      ],
+      "npmi": 0.193,
+      "n_docs_argmax": 4103
+    },
+    {
+      "topic": 8,
+      "top_words": [
+        "lapsi",
+        "äiti",
+        "perhe",
+        "vanhemmat",
+        "vauva",
+        "aikuinen",
+        "nuori",
+        "vanhempi",
+        "koulu",
+        "isä"
+      ],
+      "npmi": 0.1723,
+      "n_docs_argmax": 5604
+    },
+    {
+      "topic": 9,
+      "top_words": [
+        "tieto",
+        "henkilötieto",
+        "palvelu",
+        "eväste",
+        "sivusto",
+        "käyttäjä",
+        "oikeus",
+        "verkkosivusto",
+        "asiakas",
+        "käsittely"
+      ],
+      "npmi": 0.1725,
+      "n_docs_argmax": 3545
+    },
+    {
+      "topic": 10,
+      "top_words": [
+        "jumala",
+        "jeesus",
+        "kirkko",
+        "kristus",
+        "raamattu",
+        "seurakunta",
+        "elämä",
+        "herra",
+        "pyhä",
+        "sana"
+      ],
+      "npmi": 0.257,
+      "n_docs_argmax": 3155
+    },
+    {
+      "topic": 11,
+      "top_words": [
+        "nainen",
+        "mies",
+        "seksi",
+        "sukupuoli",
+        "tyttö",
+        "suhde",
+        "parisuhde",
+        "mies.",
+        "pillu",
+        "vaimo"
+      ],
+      "npmi": 0.0666,
+      "n_docs_argmax": 5163
+    },
+    {
+      "topic": 12,
+      "top_words": [
+        "opiskelija",
+        "koulutus",
+        "yliopisto",
+        "työ",
+        "opinnot",
+        "opettaja",
+        "koulu",
+        "kurssi",
+        "oppilas",
+        "opetus"
+      ],
+      "npmi": 0.1828,
+      "n_docs_argmax": 7970
+    },
+    {
+      "topic": 13,
+      "top_words": [
+        "tuote",
+        "tilaus",
+        "asiakas",
+        "verkkokauppa",
+        "hinta",
+        "toimitus",
+        "ostaa",
+        "valikoima",
+        "kauppa",
+        "tilata"
+      ],
+      "npmi": 0.1658,
+      "n_docs_argmax": 5591
+    },
+    {
+      "topic": 14,
+      "top_words": [
+        "hallitus",
+        "venäjä",
+        "eurooppa",
+        "maa",
+        "valtio",
+        "puolue",
+        "poliittinen",
+        "suomalainen",
+        "kunta",
+        "talous"
+      ],
+      "npmi": 0.0858,
+      "n_docs_argmax": 11057
+    },
+    {
+      "topic": 15,
+      "top_words": [
+        "laite",
+        "sovellus",
+        "tietokone",
+        "tiedosto",
+        "windows",
+        "ohjelma",
+        "kuva",
+        "käyttäjä",
+        "näyttö",
+        "puhelin"
+      ],
+      "npmi": 0.1602,
+      "n_docs_argmax": 9246
+    },
+    {
+      "topic": 16,
+      "top_words": [
+        "kaupunki",
+        "hotelli",
+        "matka",
+        "alue",
+        "sijaita",
+        "saari",
+        "ranta",
+        "ravintola",
+        "paikka",
+        "helsinki"
+      ],
+      "npmi": 0.138,
+      "n_docs_argmax": 8317
+    },
+    {
+      "topic": 17,
+      "top_words": [
+        "levy",
+        "musiikki",
+        "bändi",
+        "albumi",
+        "biisi",
+        "kappale",
+        "yhtye",
+        "keikka",
+        "soittaa",
+        "the"
+      ],
+      "npmi": 0.2553,
+      "n_docs_argmax": 3948
+    },
+    {
+      "topic": 18,
+      "top_words": [
+        "auto",
+        "moottori",
+        "rengas",
+        "ajoneuvo",
+        "ajaa",
+        "akku",
+        "kuljettaja",
+        "ajo",
+        "hinta",
+        "pyörä"
+      ],
+      "npmi": 0.1627,
+      "n_docs_argmax": 4349
+    },
+    {
+      "topic": 19,
+      "top_words": [
+        "ruoka",
+        "resepti",
+        "uuni",
+        "sekoittaa",
+        "suola",
+        "maku",
+        "taikina",
+        "sokeri",
+        "minuutti",
+        "liha"
+      ],
+      "npmi": 0.1985,
+      "n_docs_argmax": 6294
+    },
+    {
+      "topic": 20,
+      "top_words": [
+        "elokuva",
+        "kirja",
+        "tarina",
+        "teos",
+        "hahmo",
+        "kirjoittaa",
+        "kirjailija",
+        "sarja",
+        "lukea",
+        "elämä"
+      ],
+      "npmi": 0.1132,
+      "n_docs_argmax": 9235
+    },
+    {
+      "topic": 21,
+      "top_words": [
+        "dating",
+        "bitcoin",
+        "online",
+        "raha",
+        "dollari",
+        "kryptovaluutta",
+        "tarjota",
+        "ilmainen",
+        "osake",
+        "internet"
+      ],
+      "npmi": 0.0313,
+      "n_docs_argmax": 3647
+    },
+    {
+      "topic": 22,
+      "top_words": [
+        "asunto",
+        "talo",
+        "koti",
+        "kohde",
+        "vuokra",
+        "etuovi",
+        "keittiö",
+        "taloyhtiö",
+        "makuuhuone",
+        "remontti"
+      ],
+      "npmi": -0.0421,
+      "n_docs_argmax": 4862
+    },
+    {
+      "topic": 23,
+      "top_words": [
+        "joukkue",
+        "ottelu",
+        "kausi",
+        "pelaaja",
+        "pelata",
+        "maali",
+        "sarja",
+        "kisa",
+        "seura",
+        "liiga"
+      ],
+      "npmi": 0.1904,
+      "n_docs_argmax": 5192
+    },
+    {
+      "topic": 24,
+      "top_words": [
+        "iho",
+        "hius",
+        "kasvo",
+        "hoito",
+        "kosteuttaa",
+        "öljy",
+        "akne",
+        "luonnollinen",
+        "tuote",
+        "vitamiini"
+      ],
+      "npmi": 0.1117,
+      "n_docs_argmax": 2718
+    }
+  ]
+}
