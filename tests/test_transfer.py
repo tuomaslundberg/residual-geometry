@@ -67,3 +67,17 @@ def test_guessing_macro_f1_by_hand():
     f1_b = 2 * 0.25 * 0.5 / 0.75
     assert g["proportional"] == pytest.approx((f1_a + f1_b) / 2)
     assert g["uniform"] == pytest.approx(0.5)
+
+
+def test_scaled_probe_recovers_low_variance_signal():
+    """An anisotropic space: the class signal sits in a tiny-variance direction."""
+    from residual_geometry.eval.probing import linear_probe
+
+    rng = np.random.default_rng(0)
+    n = 600
+    y = np.repeat([0, 1], n // 2)
+    X = rng.standard_normal((n, 20)) * 10.0
+    X[:, 0] = (y - 0.5) * 0.02 + rng.standard_normal(n) * 0.005
+    plain = linear_probe(X, y, C=0.01)
+    scaled = linear_probe(X, y, scale=True, Cs=(0.01, 0.1, 1.0))
+    assert scaled > 0.9 and scaled > plain + 0.2

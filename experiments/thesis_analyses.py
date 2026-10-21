@@ -43,6 +43,11 @@ PARALLEL = {
 }
 REGISTERS = ["HI", "ID", "IN", "IP", "NA", "OP", "SP"]
 CONDITIONS = ["raw", "global", "mean", "leace", "inlp", "transdir_ep", "transdir_ip"]
+# Probes are standardised (unscaled probes underfit XLM-R badly, probing.make_probe), with
+# one C per encoder chosen by inner CV on the unerased Finnish register probe and reused for
+# every condition. The language probe keeps the plain probe: it sits at 0.5 or ~1.0.
+C_GRID = (0.001, 0.01, 0.1, 1.0)
+PROBE: dict = {"scale": True}
 
 # Crude, countable place-mention proxies (B, C): word-initial matches in either language.
 PLACE = {
@@ -63,11 +68,19 @@ def snippet(text: str, n: int = 400) -> str:
     return t if len(t) <= n else t[:n].rsplit(" ", 1)[0] + " …"
 
 
-def load_lang(lang: str, cache, embedder) -> tuple[list[dict], np.ndarray]:
+def load_lang(lang: str, cache, embedder, drop_wrong_language: bool = True) -> tuple[list[dict], np.ndarray]:
+    bad = set()
+    lid = Path(SAMPLE) / f"lid-{lang}.tsv"
+    if drop_wrong_language and lid.exists():
+        with open(lid, encoding="utf-8") as f:
+            next(f)
+            bad = {l.split("\t")[0] for l in f if l.rstrip("\n").endswith("\t0")}
     rows = []
     with open(Path(SAMPLE) / f"{lang}.jsonl", encoding="utf-8") as f:
         for line in f:
             d = json.loads(line)
+            if d["id"] in bad:
+                continue
             host = (urlsplit(d.get("url") or "").hostname or "").lower()
             words = d["text"].split()
             head = " ".join(words[:500])
@@ -120,8 +133,10 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=20261021)
     ap.add_argument("--n-read", type=int, default=30)
     ap.add_argument("--n-boot", type=int, default=500)
-    ap.add_argument("--probe-per-class", type=int, default=3000)
+    ap.add_argument("--probe-per-class", type=int, default=2500)
     ap.add_argument("--n-queries", type=int, default=3000)
+    ap.add_argument("--keep-wrong-language", action="store_true",
+                    help="keep documents fastText identifies as another language (lid-*.tsv ok=0)")
     args = ap.parse_args()
 
     from residual_geometry.analyse.geometry import evaluate_geometry, permutation_summary
@@ -142,7 +157,7 @@ def main() -> None:
 
     R, X = {}, {}
     for lang in ("fi", "en"):
-        R[lang], X[lang] = load_lang(lang, cache, embedder)
+        R[lang], X[lang] = load_lang(lang, cache, embedder, not args.keep_wrong_language)
     lap("sample loaded")
     reg = {l: np.array([r["label"] for r in R[l]]) for l in R}
     is_reg = {l: np.isin(reg[l], REGISTERS) for l in R}
@@ -195,6 +210,7 @@ def main() -> None:
     Qb, _ = np.linalg.qr(inlp.directions.T)
     lap(f"erasers fitted (INLP removed {inlp.n_directions_removed})")
     metrics: dict = {"model": args.model, "sample": SAMPLE, "seed": args.seed,
+                     "n_docs": {l: len(R[l]) for l in R},
                      "inlp_directions_removed": inlp.n_directions_removed}
 
     # === A. Decompose the language direction ===
@@ -321,6 +337,13 @@ def main() -> None:
         pick = np.concatenate([rng.choice(np.flatnonzero(reg[lang] == r), args.probe_per_class, replace=False)
                                for r in REGISTERS])
         sub[lang] = pick
+    from residual_geometry.eval.probing import make_probe
+
+    sel = make_probe(scale=True, Cs=C_GRID).fit(X["fi"][sub["fi"]], reg["fi"][sub["fi"]])
+    PROBE["C"] = float(sel[-1].C_[0])
+    metrics["probe"] = {"standardised": True, "C": PROBE["C"], "C_grid": list(C_GRID),
+                        "chosen_by": "inner 3-fold CV, unerased Finnish register probe"}
+    lap(f"probe C = {PROBE['C']}")
     lang_sub_X = np.vstack([X["fi"][sub["fi"]], X["en"][sub["en"]]])
     lang_sub_y = np.array(["fi"] * len(sub["fi"]) + ["en"] * len(sub["en"]))
     for how in CONDITIONS:
@@ -331,13 +354,13 @@ def main() -> None:
         else:
             lp = language_probe(lang_sub_X, lang_sub_y, eraser_factory=factories[how])
         d["language_accuracy"] = round(lp.accuracy, 4)
-        d["fi_register_acc"] = round(linear_probe(Zf[sub["fi"]], reg["fi"][sub["fi"]]), 4)
-        d["en_register_acc"] = round(linear_probe(Ze[sub["en"]], reg["en"][sub["en"]]), 4)
+        d["fi_register_acc"] = round(linear_probe(Zf[sub["fi"]], reg["fi"][sub["fi"]], **PROBE), 4)
+        d["en_register_acc"] = round(linear_probe(Ze[sub["en"]], reg["en"][sub["en"]], **PROBE), 4)
         d["register_chance"] = round(1 / len(REGISTERS), 4)
         d["transfer_fi_en_f1"] = round(cross_lingual_transfer(Zf[sub["fi"]], reg["fi"][sub["fi"]],
-                                                              Ze[is_reg["en"]], reg["en"][is_reg["en"]]).macro_f1, 4)
+                                                              Ze[is_reg["en"]], reg["en"][is_reg["en"]], **PROBE).macro_f1, 4)
         d["transfer_en_fi_f1"] = round(cross_lingual_transfer(Ze[sub["en"]], reg["en"][sub["en"]],
-                                                              Zf[is_reg["fi"]], reg["fi"][is_reg["fi"]]).macro_f1, 4)
+                                                              Zf[is_reg["fi"]], reg["fi"][is_reg["fi"]], **PROBE).macro_f1, 4)
         g = evaluate_geometry(Zf[is_reg["fi"]], reg["fi"][is_reg["fi"]], Ze[is_reg["en"]], reg["en"][is_reg["en"]],
                               registers=REGISTERS, n_permutations=1000, seed=args.seed)
         d["register_rsa"] = round(g.rsa_correlation, 4)
@@ -347,7 +370,7 @@ def main() -> None:
             if tmap:
                 ids = [R[lang][i]["id"] for i in sub[lang]]
                 ty = np.array([tmap.get(i, -1) for i in ids])
-                d[f"{lang}_topic_acc"] = round(linear_probe(Z[sub[lang]], ty), 4)
+                d[f"{lang}_topic_acc"] = round(linear_probe(Z[sub[lang]], ty, **PROBE), 4)
                 d[f"{lang}_topic_majority"] = round(majority_share(ty), 4)
         D[how] = d
         lap(f"D {how}")

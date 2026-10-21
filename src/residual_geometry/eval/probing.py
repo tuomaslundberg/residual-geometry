@@ -44,16 +44,35 @@ class TransferResult:
         }
 
 
+def make_probe(C: float = 1.0, scale: bool = False, Cs=None):
+    """Logistic-regression probe, optionally standardised and with C chosen by inner CV.
+
+    ``scale``: standardise each feature on the training data first. Needed for anisotropic
+    encoders: unscaled, an L2-penalised probe underfits XLM-R badly (Finnish register 0.53
+    vs 0.77 standardised; topic 0.16 vs 0.64), while LaBSE is barely affected.
+    ``Cs``: a grid of C values chosen by 3-fold inner CV (LogisticRegressionCV), so each
+    encoder and condition gets a fitting penalty instead of one fixed C.
+    """
+    from sklearn.linear_model import LogisticRegressionCV
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    clf = (LogisticRegressionCV(Cs=list(Cs), cv=3, max_iter=2000) if Cs
+           else LogisticRegression(C=C, max_iter=1000, solver="lbfgs"))
+    return make_pipeline(StandardScaler(), clf) if scale else clf
+
+
 def linear_probe(
     X: np.ndarray,
     y: np.ndarray,
     cv: int = 5,
     C: float = 1.0,
     seed: int = 42,
+    scale: bool = False,
+    Cs=None,
 ) -> float:
     """Cross-validated accuracy of a logistic regression probe."""
-    clf = LogisticRegression(C=C, max_iter=1000, solver="lbfgs")
-    scores = cross_val_score(clf, X, y, cv=cv, scoring="accuracy")
+    scores = cross_val_score(make_probe(C, scale, Cs), X, y, cv=cv, scoring="accuracy")
     return float(scores.mean())
 
 
@@ -128,17 +147,17 @@ def guessing_macro_f1(train_labels: np.ndarray, test_labels: np.ndarray) -> dict
 class LinearRegisterClassifier:
     """Logistic regression classifier over register-class embeddings."""
 
-    def __init__(self, C: float = 1.0, max_iter: int = 1000) -> None:
+    def __init__(self, C: float = 1.0, max_iter: int = 1000, scale: bool = False, Cs=None) -> None:
         self.C = C
         self.max_iter = max_iter
-        self._clf: LogisticRegression | None = None
+        self.scale = scale
+        self.Cs = Cs
+        self._clf = None
         self._le = LabelEncoder()
 
     def fit(self, X: np.ndarray, y: np.ndarray) -> "LinearRegisterClassifier":
         y_enc = self._le.fit_transform(y)
-        self._clf = LogisticRegression(
-            C=self.C, max_iter=self.max_iter, solver="lbfgs"
-        )
+        self._clf = make_probe(self.C, self.scale, self.Cs)
         self._clf.fit(X, y_enc)
         return self
 
@@ -171,8 +190,13 @@ def cross_lingual_transfer(
     X_tgt: np.ndarray,
     y_tgt: np.ndarray,
     C: float = 1.0,
+    scale: bool = False,
+    Cs=None,
 ) -> TransferResult:
-    """Train on source language embeddings, evaluate on target language."""
-    clf = LinearRegisterClassifier(C=C)
+    """Train on source language embeddings, evaluate on target language.
+
+    With ``scale``, the standardiser is fitted on the source language only.
+    """
+    clf = LinearRegisterClassifier(C=C, scale=scale, Cs=Cs)
     clf.fit(X_src, y_src)
     return clf.evaluate(X_tgt, y_tgt)
