@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Place Coding</title>
+<!-- Blind place coding for the thesis B reading lists (CODING.md). Adapted from Erik's
+     register annotation tool (slack-dl/4_annotate.html); model labels and agreement removed,
+     since the codes must not be steered (embargo, corrections.md 2026-10-21).
+     Open with:  open experiments/thesis/annotate.html  → load coding_blind.tsv. -->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+  :root {
+    --bg: #f6f7f9; --surface: #ffffff; --surface2: #f0f2f5; --border: #d9dde4;
+    --text: #1c2230; --dim: #5d6576; --faint: #9aa1ae;
+    --accent: #2f6fd6; --accent-soft: rgba(47,111,214,0.10); --accent-med: rgba(47,111,214,0.22);
+    --green: #2e8b57; --red: #c94a43;
+    --font: 'DM Sans', -apple-system, sans-serif; --mono: 'DM Mono', Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0c0e13; --surface: #14171e; --surface2: #1a1e28; --border: #2a3040;
+      --text: #d8dce6; --dim: #8a92a3; --faint: #4f5768;
+      --accent: #6ea1f7; --accent-soft: rgba(110,161,247,0.12); --accent-med: rgba(110,161,247,0.25);
+      --green: #5cb87a; --red: #e5574f;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.55; }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 20px 24px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+  .setup { max-width: 460px; margin: 80px auto; padding: 32px; }
+  .setup h1 { font-size: 18px; margin-bottom: 6px; }
+  .setup p { font-size: 12.5px; color: var(--dim); margin-bottom: 18px; }
+  .setup input[type=file] { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2); color: var(--text); }
+  .err { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 16px; }
+
+  .btn { padding: 7px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2);
+         color: var(--text); font: 600 12px var(--font); cursor: pointer; }
+  .btn:hover { border-color: var(--dim); }
+  .btn-accent { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn-green { background: var(--green); border-color: var(--green); color: #fff; }
+
+  .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+  .top h1 { font-size: 14px; }
+  .meta { font: 500 12px var(--mono); color: var(--dim); display: flex; gap: 14px; }
+  .pbar { height: 3px; background: var(--surface2); border-radius: 2px; margin-bottom: 16px; overflow: hidden; }
+  .pbar div { height: 100%; background: var(--accent); transition: width .2s; }
+
+  .head { padding: 8px 16px; background: var(--surface2); border-bottom: 1px solid var(--border);
+          font: 500 12px var(--mono); color: var(--dim); display: flex; gap: 14px; border-radius: 10px 10px 0 0; }
+  .lang { font-weight: 700; color: var(--accent); text-transform: uppercase; }
+  .text { padding: 16px 18px; font-size: 15px; line-height: 1.65; white-space: pre-wrap; word-break: break-word;
+          border-bottom: 1px solid var(--border); max-height: 52vh; overflow-y: auto; }
+
+  .codes { padding: 14px 16px 6px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .opt { padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface2);
+         color: var(--text); font: 500 13px var(--font); cursor: pointer; }
+  .opt .k { font: 500 10px var(--mono); color: var(--faint); border: 1px solid var(--border); border-radius: 3px;
+            padding: 0 4px; margin-right: 6px; }
+  .opt.sel { background: var(--accent-med); border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .opt.sel .k { color: var(--accent); border-color: var(--accent); }
+  .note { padding: 6px 16px 14px; }
+  .note input { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+                background: var(--surface2); color: var(--text); font: 13px var(--font); }
+  .note input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+  .hint { padding: 6px 16px; font: 400 11px var(--mono); color: var(--faint); text-align: center;
+          border-top: 1px solid var(--border); background: var(--surface2); border-radius: 0 0 10px 10px; }
+  kbd { padding: 0 4px; border: 1px solid var(--border); border-radius: 3px; font: 10px var(--mono); }
+
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; gap: 8px; flex-wrap: wrap; }
+  .nav .mid { display: flex; gap: 6px; }
+  .guide { margin-top: 14px; padding: 14px 18px; font-size: 13px; display: none; }
+  .guide table { border-collapse: collapse; width: 100%; margin: 6px 0 10px; }
+  .guide td { padding: 3px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  .guide td:first-child { font: 600 12px var(--mono); color: var(--accent); white-space: nowrap; }
+  .guide p { color: var(--dim); margin-top: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="v-setup" class="panel setup">
+    <h1>Place coding — B reading lists</h1>
+    <p>Load <code>coding_blind.tsv</code>. Progress is kept in this browser, so reloading the same file resumes where you left off. Export writes the same columns back as TSV.</p>
+    <input type="file" id="inp" accept=".tsv,.txt">
+    <div style="margin-top:16px"><button class="btn btn-accent" onclick="load()">Load &amp; start</button></div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="v-ann" style="display:none">
+    <div class="top">
+      <h1>Place coding</h1>
+      <div class="meta"><span id="m-done"></span><span id="m-pos"></span></div>
+    </div>
+    <div class="pbar"><div id="pbar"></div></div>
+
+    <div class="panel">
+      <div class="head"><span id="h-item"></span><span class="lang" id="h-lang"></span><span id="h-state"></span></div>
+      <div class="text" id="text"></div>
+      <div class="codes" id="codes"></div>
+      <div class="note"><input id="note" placeholder="note (optional): second place, spam, MT, boilerplate …" oninput="setNote(this.value)"></div>
+      <div class="hint"><kbd>1</kbd>–<kbd>6</kbd> or <kbd>F</kbd><kbd>U</kbd><kbd>A</kbd><kbd>E</kbd><kbd>N</kbd><kbd>W</kbd> code &amp; advance &nbsp; <kbd>/</kbd> note &nbsp; <kbd>Esc</kbd> leave note &nbsp; <kbd>←</kbd><kbd>→</kbd> move &nbsp; <kbd>G</kbd> next uncoded</div>
+    </div>
+
+    <div class="nav">
+      <button class="btn" onclick="go(-1)">← Prev</button>
+      <div class="mid">
+        <button class="btn" onclick="nextUncoded()">Next uncoded</button>
+        <button class="btn" onclick="toggleGuide()">Guide</button>
+        <button class="btn btn-green" onclick="exportTsv()">Export TSV ↓</button>
+      </div>
+      <button class="btn btn-accent" onclick="go(1)">Next →</button>
+    </div>
+
+    <div class="panel guide" id="guide">
+      <b>Code what the text is mainly <i>about</i></b> — not its language, not its site.
+      <table>
+        <tr><td>FI</td><td>Finland: Finnish places, institutions, people, events, Finnish everyday life</td></tr>
+        <tr><td>US</td><td>the United States</td></tr>
+        <tr><td>ANG</td><td>another English-speaking country (UK, Ireland, Canada, Australia, NZ …)</td></tr>
+        <tr><td>ELSE</td><td>some other place (another country, the EU, the world in general, a named elsewhere)</td></tr>
+        <tr><td>NONE</td><td>no particular place (generic how-to, product text, abstract topic)</td></tr>
+        <tr><td>WRONG</td><td>not in the expected language (a wrong-language page the filter missed)</td></tr>
+      </table>
+      <p>If two apply, pick the dominant one and write the other in the note. Order is random: any first N coded items are a fair subset; ~150 already give usable counts.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const CODES = [
+  { v: "FI", key: "f" }, { v: "US", key: "u" }, { v: "ANG", key: "a" },
+  { v: "ELSE", key: "e" }, { v: "NONE", key: "n" }, { v: "WRONG", key: "w" },
+];
+let header = [], rows = [], idx = 0, fp = "";
+
+/* TSV in the format Python's csv module writes with delimiter='\t': fields may be
+   double-quoted (then may contain tabs, newlines and doubled quotes). */
+function parseTsv(s) {
+  const out = []; let row = [], f = "", q = false, i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (q) {
+      if (c === '"') { if (s[i + 1] === '"') { f += '"'; i++; } else q = false; }
+      else f += c;
+    } else if (c === '"' && f === "") q = true;
+    else if (c === "\t") { row.push(f); f = ""; }
+    else if (c === "\n" || c === "\r") {
+      if (c === "\r" && s[i + 1] === "\n") i++;
+      row.push(f); f = ""; if (row.length > 1 || row[0] !== "") out.push(row); row = [];
+    } else f += c;
+    i++;
+  }
+  if (f !== "" || row.length) { row.push(f); out.push(row); }
+  return out;
+}
+function cell(v) { return /[\t\n\r"]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+
+function fingerprint(t) { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) | 0; return t.length.toString(36) + "_" + (h >>> 0).toString(36); }
+function skey() { return "placecode_" + fp; }
+function autosave() {
+  try { localStorage.setItem(skey(), JSON.stringify({ idx, codes: rows.map(r => [r.code_place, r.code_note]) })); } catch (e) {}
+}
+function resume() {
+  try {
+    const s = JSON.parse(localStorage.getItem(skey())); if (!s) return;
+    s.codes.forEach((c, i) => { if (rows[i]) { rows[i].code_place = c[0] || ""; rows[i].code_note = c[1] || ""; } });
+    idx = Math.min(s.idx || 0, rows.length - 1);
+  } catch (e) {}
+}
+
+function load() {
+  const f = document.getElementById("inp").files[0], err = document.getElementById("err");
+  if (!f) { err.textContent = "Choose coding_blind.tsv first."; return; }
+  const rd = new FileReader();
+  rd.onload = e => {
+    try {
+      const txt = e.target.result; fp = fingerprint(txt);
+      const t = parseTsv(txt); header = t[0];
+      for (const need of ["item", "lang", "text", "code_place", "code_note"])
+        if (!header.includes(need)) throw new Error("missing column " + need);
+      rows = t.slice(1).map(r => Object.fromEntries(header.map((h, i) => [h, r[i] ?? ""])));
+      resume();
+      document.getElementById("v-setup").style.display = "none";
+      document.getElementById("v-ann").style.display = "block";
+      render();
+    } catch (x) { err.textContent = "Could not read the file: " + x.message; }
+  };
+  rd.readAsText(f);
+}
+
+function esc(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+function render() {
+  const r = rows[idx], done = rows.filter(x => x.code_place).length;
+  document.getElementById("m-done").textContent = `${done} coded`;
+  document.getElementById("m-pos").textContent = `${idx + 1} / ${rows.length}`;
+  document.getElementById("pbar").style.width = `${100 * done / rows.length}%`;
+  document.getElementById("h-item").textContent = r.item;
+  document.getElementById("h-lang").textContent = r.lang;
+  document.getElementById("h-state").textContent = r.code_place ? "coded" : "";
+  document.getElementById("text").innerHTML = esc(r.text);
+  document.getElementById("text").scrollTop = 0;
+  document.getElementById("codes").innerHTML = CODES.map((c, i) =>
+    `<button class="opt ${r.code_place === c.v ? "sel" : ""}" onclick="pick(${i})"><span class="k">${i + 1}</span>${c.v}</button>`).join("");
+  const n = document.getElementById("note"); if (document.activeElement !== n) n.value = r.code_note;
+}
+
+function pick(i) { rows[idx].code_place = CODES[i].v; autosave(); go(1); }
+function setNote(v) { rows[idx].code_note = v.replace(/[\t\n\r]/g, " "); autosave(); }
+function go(d) { const n = idx + d; if (n < 0 || n >= rows.length) { render(); return; } idx = n; autosave(); render(); window.scrollTo(0, 0); }
+function nextUncoded() {
+  for (let k = 1; k <= rows.length; k++) { const j = (idx + k) % rows.length; if (!rows[j].code_place) { idx = j; autosave(); render(); return; } }
+  render();
+}
+function toggleGuide() { const g = document.getElementById("guide"); g.style.display = g.style.display === "block" ? "none" : "block"; }
+
+function exportTsv() {
+  const lines = [header.join("\t")].concat(rows.map(r => header.map(h => cell(r[h] ?? "")).join("\t")));
+  const blob = new Blob([lines.join("\n") + "\n"], { type: "text/tab-separated-values" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `coding_blind.coded-${new Date().toISOString().slice(0, 10)}.tsv`;
+  a.click();
+}
+
+document.addEventListener("keydown", e => {
+  if (document.getElementById("v-ann").style.display === "none") return;
+  const n = document.getElementById("note");
+  if (document.activeElement === n) { if (e.key === "Escape" || e.key === "Enter") { n.blur(); e.preventDefault(); } return; }
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (e.key === "ArrowRight") { go(1); e.preventDefault(); return; }
+  if (e.key === "ArrowLeft") { go(-1); e.preventDefault(); return; }
+  if (e.key === "/") { n.focus(); e.preventDefault(); return; }
+  if (k === "g") { nextUncoded(); return; }
+  const num = parseInt(e.key);
+  if (num >= 1 && num <= CODES.length) { pick(num - 1); return; }
+  const c = CODES.findIndex(x => x.key === k);
+  if (c >= 0) pick(c);
+});
+</script>
+</body>
+</html>

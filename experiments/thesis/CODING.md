@@ -31,6 +31,6 @@ The order is random, so stopping early still gives a fair subset: any first N ro
 random draw from all lists. At ~10–15 s per item, all 423 take about 1.5 hours; the first
 150 already give usable counts.
 
-Save as tab-separated text with the same columns. Afterwards `coding_key.tsv` joins the codes
+Save as tab-separated text with the same columns. **Tool:** `open experiments/thesis/annotate.html` (Mac browser), load `coding_blind.tsv`; keys `1`–`6` or `F U A E N W` code and advance, `/` opens the note, progress persists in the browser, *Export TSV* writes the same columns. It shows only the text and language — no model codes. Afterwards `coding_key.tsv` joins the codes
 to the lists, and the counts (share of FI / US per end, per encoder and direction) go next to
 the automatic mention proxy in `thesis_analyses.md` § B.
