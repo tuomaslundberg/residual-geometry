@@ -1,0 +1,172 @@
+{
+  "model": "FacebookAI/xlm-roberta-base",
+  "per_class": 6000,
+  "top_pc_variance_share": [
+    0.3945,
+    0.1143,
+    0.0456,
+    0.0338,
+    0.0241,
+    0.0211,
+    0.018,
+    0.0135,
+    0.012,
+    0.0114
+  ],
+  "spaces": {
+    "raw": {
+      "anisotropy": 0.998,
+      "cosine": {
+        "rsa": 0.421,
+        "null_p95": 0.423,
+        "p": 0.0529
+      },
+      "euclidean": {
+        "rsa": 0.421,
+        "null_p95": 0.426,
+        "p": 0.0539
+      }
+    },
+    "centred": {
+      "anisotropy": 0.001,
+      "cosine": {
+        "rsa": 0.387,
+        "null_p95": 0.432,
+        "p": 0.0699
+      },
+      "euclidean": {
+        "rsa": 0.421,
+        "null_p95": 0.425,
+        "p": 0.0569
+      }
+    },
+    "standardised": {
+      "anisotropy": 0.004,
+      "cosine": {
+        "rsa": 0.653,
+        "null_p95": 0.416,
+        "p": 0.008
+      },
+      "euclidean": {
+        "rsa": 0.623,
+        "null_p95": 0.442,
+        "p": 0.006
+      }
+    },
+    "centred_minus_top1pc": {
+      "anisotropy": -0.001,
+      "cosine": {
+        "rsa": 0.566,
+        "null_p95": 0.475,
+        "p": 0.027
+      },
+      "euclidean": {
+        "rsa": 0.418,
+        "null_p95": 0.448,
+        "p": 0.0599
+      }
+    },
+    "centred_minus_top2pc": {
+      "anisotropy": -0.001,
+      "cosine": {
+        "rsa": 0.661,
+        "null_p95": 0.438,
+        "p": 0.005
+      },
+      "euclidean": {
+        "rsa": 0.731,
+        "null_p95": 0.408,
+        "p": 0.002
+      }
+    },
+    "centred_minus_top3pc": {
+      "anisotropy": -0.001,
+      "cosine": {
+        "rsa": 0.864,
+        "null_p95": 0.399,
+        "p": 0.001
+      },
+      "euclidean": {
+        "rsa": 0.794,
+        "null_p95": 0.439,
+        "p": 0.001
+      }
+    },
+    "centred_minus_top5pc": {
+      "anisotropy": 0.001,
+      "cosine": {
+        "rsa": 0.578,
+        "null_p95": 0.361,
+        "p": 0.008
+      },
+      "euclidean": {
+        "rsa": 0.358,
+        "null_p95": 0.409,
+        "p": 0.0769
+      }
+    },
+    "centred_minus_top10pc": {
+      "anisotropy": 0.001,
+      "cosine": {
+        "rsa": 0.094,
+        "null_p95": 0.377,
+        "p": 0.3556
+      },
+      "euclidean": {
+        "rsa": 0.549,
+        "null_p95": 0.414,
+        "p": 0.02
+      }
+    },
+    "inlp": {
+      "anisotropy": 0.999,
+      "cosine": {
+        "rsa": 0.73,
+        "null_p95": 0.454,
+        "p": 0.001
+      },
+      "euclidean": {
+        "rsa": 0.73,
+        "null_p95": 0.432,
+        "p": 0.002
+      }
+    }
+  },
+  "inlp": {
+    "n_directions": 2,
+    "overlap_with_top10_pcs": [
+      [
+        0.995,
+        0.097,
+        0.007,
+        0.005,
+        0.015,
+        0.005,
+        0.003,
+        0.002,
+        0.001,
+        0.003
+      ],
+      [
+        0.1,
+        0.951,
+        0.107,
+        0.064,
+        0.171,
+        0.073,
+        0.042,
+        0.025,
+        0.004,
+        0.034
+      ]
+    ],
+    "pooled_variance_share_along": [
+      0.3917,
+      0.109
+    ],
+    "language_gap_along": [
+      0.0579,
+      0.003
+    ]
+  }
+}

@@ -149,6 +149,53 @@ Global centring equals raw and the translation directions change nothing within 
   INLP's second direction evidently removes one of them. Open: what that direction is, and
   whether RSA after standardising the features agrees.
 
+## Follow-up: why centroid RSA is unreliable (2026-10-21)
+
+`experiments/rsa_check.py` (6,000 documents per register per language; 1,000-shuffle chance
+level for each) and `experiments/xlmr_pcs.py`. Outputs: `experiments/thesis/*.rsa_check.json`.
+
+| Space (register-centroid RSA, cosine) | XLM-R | LaBSE |
+|---|---|---|
+| raw | 0.42 (chance) | 0.73 |
+| centred | 0.39 (chance) | 0.73 |
+| standardised per feature | **0.65** | 0.74 |
+| centred, top 1 principal component removed | 0.57 | **−0.19** |
+| top 2 removed | 0.66 | 0.37 (chance) |
+| top 3 removed | **0.86** | 0.54 |
+| top 5 removed | 0.58 | 0.41 (chance) |
+| top 10 removed | **0.09** (chance) | 0.67 |
+| INLP | 0.73 | 0.70 |
+
+Chance (95th percentile of shuffles) is 0.36–0.48 throughout. Euclidean distance behaves the
+same way.
+
+**What dominates XLM-R's space.** Its first three principal components carry 39 %, 11 % and
+5 % of all variance, and none is register:
+
+- **PC1 = the language direction** (correlation 0.87 with Finnish vs English; INLP's first
+  direction is PC1 to 0.995). Its English end is machine-generated word salad.
+- **PC2 = fluency of the text:** garbled machine-generated gibberish at one end, polished
+  corporate/medical prose ("Delving into the realm of …") at the other. Not language (the
+  Finnish–English gap along it is ≈ 0). INLP's second direction is PC2 to 0.95, which is why
+  INLP alone "fixed" RSA.
+- **PC3 = formatting:** Title-Case keyword-stuffed shopping pages vs conversational forum
+  posts (correlates with upper-case and digit share).
+
+These directions swamp the angles and distances between register centroids. Standardising each
+feature, or removing them, uncovers register alignment in XLM-R as strong as LaBSE's.
+
+**But RSA over 7 centroids is fragile in both encoders.** Removing between one and ten dominant
+directions swings it from chance to 0.86 in XLM-R and from −0.19 to 0.74 in LaBSE: 21 centroid
+distances depend heavily on a handful of directions.
+
+**Consequence for the thesis.** Centroid RSA should not carry a claim on its own. Probes and
+transfer (§ D) are stable across all of these choices and agree that register is
+equally present in both encoders and aligns across languages. If RSA is reported, use
+standardised features and show the sensitivity to dominant directions. The same weakness
+applies to the Procrustes check (already queued). A separate observation for the
+methods/data chapter: a "text fluency" axis (generated gibberish vs polished generated prose)
+is XLM-R's second-largest source of variance in WDS 9–10 web text.
+
 ## What this adds to the storyline
 
 - **Confirmed on a clean sample** (balanced registers, capped sites, high quality, two
