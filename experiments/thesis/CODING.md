@@ -1,10 +1,9 @@
 # Coding the B reading lists
 
-> ⛔ **Embargo (Tuomas, 2026-10-21):** no session reports coding results to Tuomas — any
-> coder's codes, counts or agreement — until he states his annotation is finished. Files
-> named `EMBARGOED-*` hold such results. **Also not to be opened before coding:**
-> `coding_key.tsv` and the `<encoder>.coding_sheet.tsv` files, which show each document's
-> end and score.
+> **Blind coding.** Coders work blind: codes are joined to the key only after all coding is
+> finished. Until then, do not open `coding_key.tsv`, the `<encoder>.coding_sheet.tsv` files
+> (which show each document's end and score) or the `EMBARGOED-*` files (other coders'
+> codes), and do not compare codes between coders.
 
 **File to code: `coding_blind.tsv`** (423 documents: every document that appears at either end
 of the web or cultural direction, for either encoder, once). Shuffled; shows only the

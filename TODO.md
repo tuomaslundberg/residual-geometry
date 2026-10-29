@@ -1,5 +1,5 @@
 # TODO — residual-geometry
-*Project task list. Updated in-session. Research decisions belong in context-card-turkunlp.md.*
+*Project task list.*
 *Format: `- [ ]` open · `- [x]` done · `[BLOCKED]` cannot proceed without external input*
 
 ---
@@ -38,7 +38,7 @@ See "Next sprint" section below.
 ## Infrastructure
 
 - [x] `.gitignore` — `outputs/` and `/data/` correctly anchored
-- [x] LUMI module documentation — `experiments/lumi-onboarding.md` and `platform.md`
+- [x] LUMI module documentation — `docs/lumi-setup.md`
 - [ ] **Execute bit** — `chmod +x sl-run-xlmr sl-run-phase2` committed (pending user push)
 
 ---

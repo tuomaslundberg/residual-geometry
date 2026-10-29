@@ -84,7 +84,7 @@ from the embedding cache). This is a first look, written to be read, not a resul
   content has no Finnish-specific English counterpart to find, so it lands on its closest
   American equivalent.
 
-## What this suggests (for Tuomas to judge)
+## Open questions
 
 - **"What remains after language removal" has two different answers depending on whether the
   encoder was trained to suppress language.** In XLM-R, removal takes away language form and

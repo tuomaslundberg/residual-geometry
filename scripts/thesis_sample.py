@@ -1,4 +1,4 @@
-"""Build the thesis sample from HPLT 4 sampler output (Tuomas's scheme, 2026-10-19).
+"""Build the thesis sample from HPLT 4 sampler output (sampling scheme, 2026-10-19).
 
 Labelling, per document, at the language's model-card threshold (fin 0.45, eng 0.40):
 - exactly one main register among HI ID IN IP LY NA OP SP: keep it as the label;
